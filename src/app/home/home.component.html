@@ -1,7 +1,15 @@
 <div fxLayout="column">
   <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
-    <div fxFlex="75%" fxFlexAlign="center">
+    <div fxLayout="column" fxFlex="75%" fxFlex.lt-md="95%" fxLayoutGap="0px">
+      <h2 class="mat-title" *ngIf="!userDetails">Loading...</h2>
+      <h2 class="mat-title" *ngIf="userDetails">Join {{userDetails.requiredSessionCount}} Directed Study periods.</h2>
+      <p *ngIf="userDetails">Click on Directed Study periods to toggle your choices. Make sure they don't clash with any other lessons on your timetable.</p>
+    </div>
+  </div>
+  <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center" *ngIf="userDetails">
+    <div fxFlex="75%" fxFlex.lt-md="95%">
       <mat-card>
+        <h2 class="mat-title">Week A</h2>
         <mat-grid-list cols="5" rowHeight="4:1">
           <!-- Headers -->
           <mat-grid-tile class="header">
@@ -20,10 +28,10 @@
             <p class="mat-subheading-1">Friday</p>
           </mat-grid-tile>
           <!-- Sessions -->
-          <mat-grid-tile [rowspan]="2" *ngFor="let session of week1Sessions">
-            <div *ngIf="session.event">
+          <mat-grid-tile [class.event]="session.event" [rowspan]="2" *ngFor="let session of week1Sessions">
+            <div *ngIf="session.event" >
               <p class="mat-body-2">{{session.event.name}}</p>
-              <p class="mat-body-1">{{session.event.capacity}}</p>
+              <p class="mat-body-1">{{session.event.capacity}} places left</p>
             </div>
             <p class="mat-caption" *ngIf="!session.event && session.week != null">No Event</p>
           </mat-grid-tile>
@@ -32,9 +40,10 @@
     </div>
   </div>
 
-  <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
-    <div fxFlex="75%" fxFlexAlign="center">
+  <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center" *ngIf="userDetails">
+    <div fxFlex="75%" fxFlex.lt-md="95%">
       <mat-card>
+        <h2 class="mat-title">Week B</h2>
         <mat-grid-list cols="5" rowHeight="4:1">
           <!-- Headers -->
           <mat-grid-tile class="header">
@@ -64,7 +73,7 @@
       </mat-card>
     </div>
   </div>
-
+<!-- 
   <div fxLayout="row" fxLayoutAlign="center">
     <div fxFlex="50%" fxFlexAlign="center">
       <form (ngSubmit)="onSubmit()" #addSessionForm="ngForm">
@@ -86,5 +95,5 @@
         <button mat-raised-button type="submit" [disabled]="!addSessionForm.form.valid">Save</button>
       </form>
     </div>
-  </div>
+  </div> -->
 </div>

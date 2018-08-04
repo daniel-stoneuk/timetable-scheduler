@@ -1,0 +1,19 @@
+<div fxLayout="column">
+  <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
+    <div fxFlex="50%" fxFlex.lt-md="90%">
+      <mat-card>
+        <form (ngSubmit)="sendEmailLink()" #loginForm="ngForm">
+          <div fxLayout="column">
+
+            <h2 class="mat-title">Sign In With Your School Email</h2>
+            <mat-form-field appearance="outline">
+              <mat-label>Email Address</mat-label>
+              <input matInput type="email" required [(ngModel)]="email" name="email" [disabled]="emailSent" placeholder="me@example.com">
+            </mat-form-field>
+            <button mat-raised-button type="submit" color="accent" [disabled]="!loginForm.form.valid || emailSent">Sign In</button>
+          </div>
+        </form>
+      </mat-card>
+    </div>
+  </div>
+</div>

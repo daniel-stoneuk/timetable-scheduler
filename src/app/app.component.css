@@ -3,3 +3,19 @@
     position: sticky;
     top: 0;
   }
+
+  mat-toolbar .icon {
+    padding: 0 14px;
+  }
+  
+  mat-toolbar .spacer {
+    flex: 1 1 auto;
+  }
+
+  .backgroundFill {
+    background-color: #F5F5F5;
+  }
+
+  .primaryFill {
+    background-color: #673ab7;
+  }

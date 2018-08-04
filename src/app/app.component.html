@@ -1,6 +1,10 @@
-<mat-toolbar color="primary" class="mat-elevation-z6">
-  <span>Directed Study Timetable</span>
+<mat-toolbar color="primary" [class.mat-elevation-z6]="loggedIn">
+  <span>Choose When</span>
+  <span class="spacer"></span>
+  <button mat-icon-button class="icon" *ngIf="loggedIn" (click)="authService.logout()">
+  <mat-icon>exit_to_app</mat-icon>
+</button>
 </mat-toolbar>
-<div id="content">
-  <home></home>
+<div id="content" fxFlexFill class="backgroundFill" [class.primaryFill]="!loggedIn">
+  <router-outlet></router-outlet>
 </div>

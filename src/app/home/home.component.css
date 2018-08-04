@@ -1,6 +1,14 @@
 mat-grid-tile {
-    background: #e8eaf6;
+    background: #ECEFF1;
     text-align: center;
+}
+
+.event {
+    background: #CFD8DC;
+}
+
+.event .selected {
+    background: #A5D6A7;
 }
 
 mat-grid-list .header {

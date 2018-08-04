@@ -1,7 +1,9 @@
+import { UserDetails } from './../initialise/initialise.component';
+import { User, AuthService } from './../auth.service';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators'
 import { Component, OnInit } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection } from '../../../node_modules/angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreCollection, DocumentData } from '../../../node_modules/angularfire2/firestore';
 
 interface Event {
   capacity: number;
@@ -22,6 +24,10 @@ interface Session {
 })
 export class HomeComponent implements OnInit {
 
+  user: User;
+  userDetails: DocumentData;
+
+  requiredSessionCount: number;
 
   sessionCollection: AngularFirestoreCollection<Session>;
 
@@ -31,7 +37,7 @@ export class HomeComponent implements OnInit {
   week2SessionCollection: AngularFirestoreCollection<Session>;
   week2Sessions: Session[];
 
-  constructor(private afs: AngularFirestore) { }
+  constructor(private afs: AngularFirestore, private authService: AuthService) { }
 
   addSession: Session = {
     week: null,
@@ -41,6 +47,14 @@ export class HomeComponent implements OnInit {
   };
 
   ngOnInit() {
+
+    this.authService.getUser().subscribe(user => {
+      this.user = user;
+      this.user.userDetails.get().then(result => {
+        this.userDetails = result.data();
+      })
+    });
+
     this.sessionCollection = this.afs.collection("sessions");
     this.week1SessionCollection = this.afs.collection("sessions", ref => ref.where('week', '==', 0));
     this.week1SessionCollection.valueChanges()
@@ -54,9 +68,6 @@ export class HomeComponent implements OnInit {
     this.week2SessionCollection.valueChanges()
       .pipe(map(sessions => {
         sessions.sort(this.compare);
-        for (var num = 0; num < 5; num++) {
-          sessions.splice(6 * 5, 0, { week: null, day: null, number: null, event: null });
-        }
         return sessions;
       }))
       .subscribe(sessions => this.week2Sessions = sessions);

@@ -1,0 +1,28 @@
+<div fxLayout="column">
+  <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
+    <div fxFlex="50%" fxFlex.lt-md="90%">
+      <mat-card>
+        <div fxLayout="column">
+          <h1 class="mat-headline">Welcome to Choose When</h1>
+          <mat-spinner *ngIf="!couldNotFindDetails && !foundUserDetails" fxFlexAlign="center"></mat-spinner>
+          <div *ngIf="couldNotFindDetails">
+              <h2 class="mat-title">Something went wrong.</h2>
+            <p>It doesn't look like there are any details linked to {{user.email}}. Please make sure that you have registered
+              with your
+              <strong>school email</strong> and contact your school if required. Log out with the button in the top right.</p>
+          </div>
+          <div *ngIf="foundUserDetails">
+            <h2 class="mat-title">Hi {{foundUserDetails.displayName}}!</h2>
+            <p>We've found some details linked to your email address. Please confirm that these are correct to continue.</p>
+            <ul>
+              <li>Your name is <strong>{{foundUserDetails.displayName}}</strong></li>
+              <li>Your email address is <strong>{{foundUserDetails.email}}</strong></li>
+              <li>You are required to sign up for <strong>{{foundUserDetails.requiredSessionCount}} directed study sessions</strong> over two weeks.</li>
+            </ul>
+            <button mat-raised-button color="primary" (click)="onConfirm()">Confirm</button>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</div>
