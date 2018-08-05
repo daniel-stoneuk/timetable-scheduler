@@ -5,8 +5,8 @@ import { Component, OnInit } from '@angular/core';
 import { BreakpointObserver, Breakpoints, BreakpointState } from '@angular/cdk/layout';
 import { Observable, of } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
-import { Router } from '../../node_modules/@angular/router';
-import { AngularFirestore } from '../../node_modules/angularfire2/firestore';
+import { Router } from '@angular/router';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { User } from './auth.service';
 
 @Component({
@@ -17,6 +17,7 @@ import { User } from './auth.service';
 export class AppComponent implements OnInit {
   
   loggedIn: boolean = true;
+  schoolAdmin: boolean = false;
   user: User;
     
   constructor(public afAuth: AngularFireAuth, private afs: AngularFirestore, public authService: AuthService, private router: Router) {}
@@ -27,9 +28,15 @@ export class AppComponent implements OnInit {
       console.log(this.user);
       if (this.user == null) {
         this.loggedIn = false;
+        this.schoolAdmin = false;
         this.router.navigate(['login']);
       } else {
         this.loggedIn = true;
+        if (this.user.schoolAdmin) {
+          this.schoolAdmin = true;
+        } else {
+          this.schoolAdmin = false;
+        }
         // Check if user is initialised
         if (!this.user.initialised) {
           this.router.navigate(['initialise']);

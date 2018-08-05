@@ -1,19 +1,19 @@
 import { UserDetails } from './initialise/initialise.component';
-import { switchMap } from 'rxjs/operators';
+import { switchMap, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
 import { AngularFirestore, DocumentReference } from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
-import { Router } from '../../node_modules/@angular/router';
+import { Router } from '@angular/router';
 
 export interface User {
   uid: string;
   email: string;
-  initialised: boolean;
-  admin: boolean;
-  school: DocumentReference;
-  schoolAdmin: boolean;
-  userDetails: DocumentReference;
+  initialised?: boolean;
+  admin?: boolean;
+  school?: DocumentReference;
+  schoolAdmin?: boolean;
+  userDetails?: DocumentReference;
 }
 
 @Injectable({
@@ -21,7 +21,7 @@ export interface User {
 })
 export class AuthService {
 
-  private user: Observable<User>;
+  public user: Observable<User>;
 
   constructor(public afAuth: AngularFireAuth, private afs: AngularFirestore, private router: Router) { }
 

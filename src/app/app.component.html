@@ -1,9 +1,12 @@
 <mat-toolbar color="primary" [class.mat-elevation-z6]="loggedIn">
-  <span>Choose When</span>
+  <span routerLink="/home">Choose When</span>
   <span class="spacer"></span>
+  <button mat-icon-button class="icon" *ngIf="loggedIn && schoolAdmin" routerLink="/school-admin">
+    <mat-icon>build</mat-icon>
+  </button>
   <button mat-icon-button class="icon" *ngIf="loggedIn" (click)="authService.logout()">
-  <mat-icon>exit_to_app</mat-icon>
-</button>
+    <mat-icon>exit_to_app</mat-icon>
+  </button>
 </mat-toolbar>
 <div id="content" class="backgroundFill" [class.primaryFill]="!loggedIn">
   <router-outlet></router-outlet>

@@ -1,9 +1,9 @@
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { Component, OnInit, Inject, ChangeDetectorRef } from '@angular/core';
-import { MAT_BOTTOM_SHEET_DATA } from '../../../node_modules/@angular/material';
+import { MAT_BOTTOM_SHEET_DATA } from '@angular/material';
 import { EventId } from '../home/home.component';
 import { User } from '../auth.service';
-import { map } from '../../../node_modules/rxjs/operators';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'event-selection-bottom-sheet',

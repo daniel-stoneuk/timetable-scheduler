@@ -1,5 +1,5 @@
 import { Router } from '@angular/router';
-import { User } from './../auth.service';
+import { User } from '../auth.service';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChangeAction, DocumentChange, DocumentSnapshot } from 'angularfire2/firestore';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';

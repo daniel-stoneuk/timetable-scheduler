@@ -1,4 +1,4 @@
-import { User } from './../auth.service';
+import { User } from '../auth.service';
 import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { async } from '@angular/core/testing';
 import { Observable } from 'rxjs';
@@ -6,6 +6,7 @@ import { AngularFireAuth } from 'angularfire2/auth';
 import { Router } from '@angular/router';
 import { Component, OnInit } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar'
+import { first } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
@@ -57,19 +58,14 @@ export class LoginComponent implements OnInit {
     }
   }
 
-  private updateUserData(user) {
+  async updateUserData(user) {
     // Sets user data to firestore on login
 
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${user.uid}`);
-
+    
     const data: User = {
       uid: user.uid,
       email: user.email,
-      initialised: false,
-      admin: false,
-      schoolAdmin: null,
-      school: null,
-      userDetails: null
     }
 
     return userRef.set(data, { merge: true })

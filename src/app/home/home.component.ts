@@ -1,11 +1,12 @@
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { BreakpointObserver, BreakpointState, Breakpoints } from '@angular/cdk/layout';
-import { UserDetails, School } from './../initialise/initialise.component';
-import { User, AuthService } from './../auth.service';
+import { UserDetails, School } from '../initialise/initialise.component';
+import { User, AuthService } from '../auth.service';
 import { Observable } from 'rxjs';
 import { map, first } from 'rxjs/operators'
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentData, DocumentReference } from '../../../node_modules/angularfire2/firestore';
-import { MatBottomSheet } from '../../../node_modules/@angular/material';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentData, DocumentReference } from 'angularfire2/firestore';
+import { MatBottomSheet } from '@angular/material';
 import { EventSelectionBottomSheetComponent } from '../event-selection-bottom-sheet/event-selection-bottom-sheet.component';
 
 export interface Event {
@@ -50,15 +51,15 @@ export class HomeComponent implements OnInit {
 
   events: EventId[];
 
-  constructor(private afs: AngularFirestore, private authService: AuthService, private bottomSheet: MatBottomSheet, private breakpointObserver: BreakpointObserver,  private changeDetectorRef: ChangeDetectorRef) { }
+  constructor(private afs: AngularFirestore, private authService: AuthService, private bottomSheet: MatBottomSheet, private snackbar: MatSnackBar, private breakpointObserver: BreakpointObserver, private changeDetectorRef: ChangeDetectorRef) { }
 
   ngOnInit() {
     this.breakpointObserver.observe([Breakpoints.HandsetLandscape,
-      Breakpoints.HandsetPortrait]).subscribe((value) => {
-        this.isHandset = value.matches;
-        this.changeDetectorRef.detectChanges();
-      });
-    
+    Breakpoints.HandsetPortrait]).subscribe((value) => {
+      this.isHandset = value.matches;
+      this.changeDetectorRef.detectChanges();
+    });
+
     this.authService.getUser().subscribe(user => {
       this.user = user;
       this.afs.collection(this.user.userDetails.parent).doc<UserDetails>(this.user.userDetails.id).valueChanges().subscribe(userDetails => {
@@ -98,7 +99,7 @@ export class HomeComponent implements OnInit {
             for (let event of filtered) {
               let selected = false;
               if (event.participants.includes(this.user.userDetails.id)) {
-                selectedSessionCount ++;
+                selectedSessionCount++;
                 selected = true;
               }
               events.push({ event: event, selected: selected });
@@ -130,21 +131,26 @@ export class HomeComponent implements OnInit {
       this.toggleSelection(events[0]);
     } else {
       const bottomSheetRef = this.bottomSheet.open(EventSelectionBottomSheetComponent, {
-       data: {user: this.user, events: events}
+        data: { user: this.user, events: events }
       });
     }
   }
 
   toggleSelection(event) {
-    const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school.id}/events/${event.event.id}`);
-    let selected = event.event.participants.indexOf(this.user.userDetails.id);
-    if (selected != -1) {
-      event.event.participants.splice(selected, 1);
-    } else {
-      event.event.participants.push(this.user.userDetails.id);
-    }
-    eventRef.update({
-      participants: event.event.participants
-    });
+      const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school.id}/events/${event.event.id}`);
+      let selected = event.event.participants.indexOf(this.user.userDetails.id);
+      if (selected != -1) {
+        event.event.participants.splice(selected, 1);
+      } else if (event.event.participants.length < event.event.capacity) {
+        event.event.participants.push(this.user.userDetails.id);
+      } else if (this.userDetails.requiredSessionCount - this.selectedSessionCount > 0) {
+        this.snackbar.open("This session is full. Try again later.", null, { duration: 2000 });
+      } else {
+        this.snackbar.open("You have reached your max number of joined sessions.", null, { duration: 2000 });
+      }
+      eventRef.update({
+        participants: event.event.participants
+      });
+    
   }
 }

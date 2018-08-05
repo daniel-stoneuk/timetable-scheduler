@@ -1,6 +1,7 @@
-<mat-nav-list *ngIf="evs" >
-    <a *ngFor="let event of evs" mat-list-item (click)="onSelection(event)" [class.selected]="event.selected">
-      <span mat-line>{{event.event.name}}</span>
-      <span mat-line>{{event.event.participants?.length}} / {{event.event.capacity}}</span>
-    </a>
-  </mat-nav-list>
+<mat-nav-list *ngIf="evs">
+  <h2 class="mat-title">Join a session</h2>
+  <a *ngFor="let event of evs" mat-list-item (click)="onSelection(event)" [class.selected]="event.selected">
+    <span mat-line>{{event.event.name}}</span>
+    <span mat-line>{{event.event.participants?.length}} / {{event.event.capacity}}</span>
+  </a>
+</mat-nav-list>
