@@ -3,11 +3,18 @@ mat-grid-tile {
     text-align: center;
 }
 
+.break {
+    background: #ffffff;
+}
+.break p {
+    color: #afafaf;
+}
+
 .event {
     background: #CFD8DC;
 }
 
-.event .selected {
+.event.selected {
     background: #A5D6A7;
 }
 

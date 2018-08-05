@@ -1,0 +1,7 @@
+.selected {
+    background: #A5D6A7;
+}
+
+mat-nav-list .selected:hover {
+    background: rgb(152, 196, 153) !important;
+  }

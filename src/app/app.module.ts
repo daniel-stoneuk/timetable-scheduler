@@ -7,7 +7,7 @@ import { LayoutModule } from '@angular/cdk/layout';
 import {
   MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule,
   MatGridListModule, MatInputModule, MatFormFieldModule, MatCardModule, MatDividerModule,
-  MatSnackBarModule, MatProgressSpinnerModule
+  MatSnackBarModule, MatProgressSpinnerModule, MatRippleModule, MatBottomSheetModule
 } from '@angular/material';
 import { HomeComponent } from './home/home.component';
 
@@ -20,6 +20,8 @@ import { FormsModule } from '../../node_modules/@angular/forms';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 import { LoginComponent } from './login/login.component';
 import { InitialiseComponent } from './initialise/initialise.component';
+import { NgForNumberLoopPipe } from './ng-for-number-loop.pipe';
+import { EventSelectionBottomSheetComponent } from './event-selection-bottom-sheet/event-selection-bottom-sheet.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +29,11 @@ import { InitialiseComponent } from './initialise/initialise.component';
     HomeComponent,
     LoginComponent,
     InitialiseComponent,
+    NgForNumberLoopPipe,
+    EventSelectionBottomSheetComponent,
+  ],
+  entryComponents: [
+    EventSelectionBottomSheetComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -48,6 +55,8 @@ import { InitialiseComponent } from './initialise/initialise.component';
     MatDividerModule,
     MatSnackBarModule,
     MatProgressSpinnerModule,
+    MatRippleModule,
+    MatBottomSheetModule,
     AppRoutingModule
   ],
   providers: [],

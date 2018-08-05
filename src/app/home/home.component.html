@@ -1,99 +1,52 @@
-<div fxLayout="column">
+<div fxLayout="column" style="padding-bottom: 2em">
   <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
-    <div fxLayout="column" fxFlex="75%" fxFlex.lt-md="95%" fxLayoutGap="0px">
+    <div fxLayout="column" fxFlex="70%" fxFlex.lg="40%" fxFlex.lt-md="95%" fxLayoutGap="0px">
       <h2 class="mat-title" *ngIf="!userDetails">Loading...</h2>
-      <h2 class="mat-title" *ngIf="userDetails">Join {{userDetails.requiredSessionCount}} Directed Study periods.</h2>
+      <h2 class="mat-title" *ngIf="userDetails">Join {{userDetails.requiredSessionCount - selectedSessionCount}} Directed Study periods.</h2>
       <p *ngIf="userDetails">Click on Directed Study periods to toggle your choices. Make sure they don't clash with any other lessons on your timetable.</p>
     </div>
   </div>
-  <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center" *ngIf="userDetails">
-    <div fxFlex="75%" fxFlex.lt-md="95%">
-      <mat-card>
-        <h2 class="mat-title">Week A</h2>
-        <mat-grid-list cols="5" rowHeight="4:1">
-          <!-- Headers -->
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Monday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Tuesday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Wednesday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Thursday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Friday</p>
-          </mat-grid-tile>
-          <!-- Sessions -->
-          <mat-grid-tile [class.event]="session.event" [rowspan]="2" *ngFor="let session of week1Sessions">
-            <div *ngIf="session.event" >
-              <p class="mat-body-2">{{session.event.name}}</p>
-              <p class="mat-body-1">{{session.event.capacity}} places left</p>
-            </div>
-            <p class="mat-caption" *ngIf="!session.event && session.week != null">No Event</p>
-          </mat-grid-tile>
-        </mat-grid-list>
-      </mat-card>
-    </div>
-  </div>
+  <ng-container *ngIf="sessions">
+    <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center" *ngFor="let weekIndex of school?.timetable.weekData.names.length | ngForNumberLoop">
+      <div fxFlex="70%" fxFlex.lg="40%" fxFlex.lt-md="95%">
+        <mat-card>
+          <h2 class="mat-title">{{school?.timetable.weekData.names[weekIndex]}}</h2>
+          <mat-grid-list [cols]="school?.timetable.dayData.names.length" rowHeight="{{isHandset ? '1:1' : '3:1' }}">
+            <!-- Headers -->
+            <mat-grid-tile class="header" *ngFor="let dayName of school?.timetable.dayData.names">
+              <p class="mat-subheading-1">{{dayName}}</p>
+            </mat-grid-tile>
+            <!-- Sessions -->
+            <div *ngFor="let sessionIndex of (school?.timetable.sessionData.count + school?.timetable.sessionData.breakAfter.length) | ngForNumberLoop">
+              <mat-grid-tile *ngFor="let dayIndex of school?.timetable.dayData.names.length | ngForNumberLoop" [class.break]="sessions[weekIndex][dayIndex][sessionIndex].break"
+                [rowspan]="sessions[weekIndex][dayIndex][sessionIndex].break ? '1' : '2'">
+                <div fxFlexFill matRipple fxLayout="column wrap" fxLayoutAlign="center center" *ngIf="sessions[weekIndex][dayIndex][sessionIndex].events?.length; else noEvent"
+                  [class.event]="sessions[weekIndex][dayIndex][sessionIndex].events.length > 0" [class.selected]="isSelected(sessions[weekIndex][dayIndex][sessionIndex])"
+                  (click)="onSelect(sessions[weekIndex][dayIndex][sessionIndex].events)">
+                  <ng-container *ngIf="sessions[weekIndex][dayIndex][sessionIndex].events.length === 1; else manyEvents">
+                    <p class="mat-body-2">
+                      {{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.name}}</p>
+                    <p class="mat-body-1">{{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.participants.length}} / {{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.capacity}}</p>
 
-  <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center" *ngIf="userDetails">
-    <div fxFlex="75%" fxFlex.lt-md="95%">
-      <mat-card>
-        <h2 class="mat-title">Week B</h2>
-        <mat-grid-list cols="5" rowHeight="4:1">
-          <!-- Headers -->
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Monday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Tuesday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Wednesday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Thursday</p>
-          </mat-grid-tile>
-          <mat-grid-tile class="header">
-            <p class="mat-subheading-1">Friday</p>
-          </mat-grid-tile>
-          <!-- Sessions -->
-          <mat-grid-tile [rowspan]="2" *ngFor="let session of week2Sessions">
-            <div *ngIf="session.event">
-              <p class="mat-body-2">{{session.event.name}}</p>
-              <p class="mat-body-1">{{session.event.capacity}}</p>
+                  </ng-container>
+                  <ng-template #manyEvents>
+                    <p class="mat-body-2">{{sessions[weekIndex][dayIndex][sessionIndex].events?.length}} sessions</p>
+                    <p class="mat-caption" style="margin: 0px" *ngFor="let multipleSession of sessions[weekIndex][dayIndex][sessionIndex].events">{{multipleSession.event.participants.length}} / {{multipleSession.event.capacity}}</p>
+                  </ng-template>
+                </div>
+                <ng-template #noEvent>
+                  <ng-container *ngIf="!sessions[weekIndex][dayIndex][sessionIndex].break; else break">
+                    <p class="mat-caption">No Event</p>
+                  </ng-container>
+                  <ng-template #break>
+                    <p class="mat-caption">break</p>
+                  </ng-template>
+                </ng-template>
+              </mat-grid-tile>
             </div>
-            <p class="mat-caption" *ngIf="!session.event && session.week != null">No Event</p>
-          </mat-grid-tile>
-        </mat-grid-list>
-      </mat-card>
+          </mat-grid-list>
+        </mat-card>
+      </div>
     </div>
-  </div>
-<!-- 
-  <div fxLayout="row" fxLayoutAlign="center">
-    <div fxFlex="50%" fxFlexAlign="center">
-      <form (ngSubmit)="onSubmit()" #addSessionForm="ngForm">
-        <div fxLayout="column">
-          <h2 class="mat-title">Add a session</h2>
-          <mat-form-field appearance="outline">
-            <mat-label>Week</mat-label>
-            <input matInput type="number" required [(ngModel)]="addSession.week" name="week" placeholder="0 or 1">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Day</mat-label>
-            <input matInput type="number" required [(ngModel)]="addSession.day" name="day" placeholder="0 to 4">
-          </mat-form-field>
-          <mat-form-field appearance="outline">
-            <mat-label>Number</mat-label>
-            <input matInput type="number" required [(ngModel)]="addSession.number" name="number" placeholder="0 to 5">
-          </mat-form-field>
-        </div>
-        <button mat-raised-button type="submit" [disabled]="!addSessionForm.form.valid">Save</button>
-      </form>
-    </div>
-  </div> -->
+  </ng-container>
 </div>

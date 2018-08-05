@@ -3,13 +3,33 @@ import { User } from './../auth.service';
 import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentChangeAction, DocumentChange, DocumentSnapshot } from 'angularfire2/firestore';
 import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../auth.service';
-import { map } from 'rxjs/operators'
+import { map, first } from 'rxjs/operators'
 
 export interface UserDetails {
   displayName: string,
   email: string,
   requiredSessionCount: number
 }
+
+export interface School {
+  name: string,
+  emailDomains: string[],
+  timetable: {
+    dayData: {
+      names: string[]
+    },
+    sessionData: {
+      breakAfter: number[],
+      count: number
+    },
+    weekData: {
+      names: string[]
+    }
+  }
+}
+
+export interface SchoolId extends School { id: string }
+
 export interface UserDetailsId extends UserDetails { id: string; }
 
 
@@ -22,6 +42,7 @@ export class InitialiseComponent implements OnInit {
 
   user: User;
   private userDetailsCollection: AngularFirestoreCollection<UserDetails>;
+  foundSchool: SchoolId;
   foundUserDetails: UserDetailsId;
   couldNotFindDetails: boolean = false;
 
@@ -30,29 +51,55 @@ export class InitialiseComponent implements OnInit {
   ngOnInit() {
     this.authService.getUser().subscribe(user => {
       this.user = user;
-      if (this.user.initialised) this.router.navigate(['home']);
+      if (this.user) {
+        if (this.user.initialised) this.router.navigate(['home']);
+        console.log("Hello!");
+        this.findUserDetails();
+      }
+    })
+  }
 
-      this.userDetailsCollection = this.afs.collection<UserDetails>('user-details', ref => ref.where('email', '==', user.email));
-      this.userDetailsCollection.snapshotChanges().pipe(map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as UserDetails;
+  async findUserDetails() {
+    // find school for this email domain
+    try {
+      let domain = this.user.email.replace(/.*@/, "");
+      console.log(domain);
+      const schools: SchoolId[] = await this.afs.collection<SchoolId>('schools', ref => ref.where('emailDomains', 'array-contains', domain)).snapshotChanges().pipe(map(actions => actions.map(a => {
+        const data = a.payload.doc.data() as SchoolId;
         const id = a.payload.doc.id;
         return { id, ...data };
-      }))).subscribe(userDetails => {
+      })), first()).toPromise();
+      console.log(schools);
+      if (schools.length === 1) {
+        this.foundSchool = schools[0];
+        this.userDetailsCollection = this.afs.collection<UserDetails>(`schools/${this.foundSchool.id}/user-details`, ref => ref.where('email', '==', this.user.email));
+        const userDetails = await this.userDetailsCollection.snapshotChanges().pipe(map(actions => actions.map(a => {
+          const data = a.payload.doc.data() as UserDetails;
+          const id = a.payload.doc.id;
+          return { id, ...data };
+        })), first()).toPromise();
         if (userDetails.length > 0) {
           this.foundUserDetails = userDetails[0];
         } else {
-          this.couldNotFindDetails = true;
+          throw { "Error": "Details not found" }
         }
-      })
-    })
+      } else {
+        throw { "Error": "No schools found" };
+      }
+    } catch (err) {
+      console.log(JSON.stringify(err));
+      this.couldNotFindDetails = true;
+    }
   }
 
   onConfirm(): void {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${this.user.uid}`);
-    const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`user-details/${this.foundUserDetails.id}`);
+    const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.foundSchool.id}/user-details/${this.foundUserDetails.id}`);
+    const schoolRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.foundSchool.id}`);
     userRef.update({
       initialised: true,
-      userDetails: userDetailsRef.ref
+      userDetails: userDetailsRef.ref,
+      school: schoolRef.ref
     });
     this.router.navigate(['home']);
   }

@@ -67,6 +67,8 @@ export class LoginComponent implements OnInit {
       email: user.email,
       initialised: false,
       admin: false,
+      schoolAdmin: null,
+      school: null,
       userDetails: null
     }
 

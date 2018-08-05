@@ -11,6 +11,8 @@ export interface User {
   email: string;
   initialised: boolean;
   admin: boolean;
+  school: DocumentReference;
+  schoolAdmin: boolean;
   userDetails: DocumentReference;
 }
 
