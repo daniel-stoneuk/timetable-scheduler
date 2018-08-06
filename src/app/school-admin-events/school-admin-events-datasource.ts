@@ -82,7 +82,7 @@ export class SchoolAdminEventsDataSource extends DataSource<EventId> {
         case 'name': return compare(a.name, b.name, isAsc);
         case 'id': return compare(a.id, b.id, isAsc);
         case 'capacity': return compare(a.capacity, b.capacity, isAsc);
-        case 'participants': return compare(a.participants.length, b.participants.length, isAsc);
+        case 'participantCount': return compare(a.participants.length, b.participants.length, isAsc);
         case 'week': return compare(a.timetablePosition.week, b.timetablePosition.week, isAsc);
         case 'day': return compare(a.timetablePosition.day, b.timetablePosition.day, isAsc);
         case 'session': return compare(a.timetablePosition.session, b.timetablePosition.session, isAsc);
