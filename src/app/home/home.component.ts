@@ -69,7 +69,7 @@ export class HomeComponent implements OnInit {
       this.afs.collection(this.user.school.parent).doc<School>(this.user.school.id).valueChanges().subscribe(school => {
         this.school = school;
       });
-      this.afs.collection<EventId>(`schools/${this.user.school.id}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
+      this.afs.collection<Event>(`schools/${this.user.school.id}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
         const data = a.payload.doc.data() as EventId;
         const id = a.payload.doc.id;
         return { id, ...data };

@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
       .pipe(map(user => {
         if (user) {
           console.log('Initialised: ' + !!!user.initialised);
-          if (!!!user.initialised && !(next.routeConfig.path === "initialise")) {
+          if (!!!user.initialised && !!!user.schoolAdmin && !(next.routeConfig.path === "initialise")) {
             console.log('Access Denied');
             this.router.navigate(['initialise']);
             return false;

@@ -79,6 +79,7 @@ export class LoginComponent implements OnInit {
     };
 
     try {
+      this.email = this.email.toLowerCase();
       this.emailSent = true;
       await this.afAuth.auth.sendSignInLinkToEmail(this.email, actionCodeSettings);
       window.localStorage.setItem('emailForSignIn', this.email);

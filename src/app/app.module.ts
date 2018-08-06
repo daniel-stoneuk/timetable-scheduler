@@ -1,3 +1,4 @@
+import { SchoolAdminEventsEditDialogComponent } from './school-admin-events-edit-dialog/school-admin-events-edit-dialog.component';
 import { SchoolAdminRoutingModule } from './school-admin-routing/school-admin-routing.module';
 import { AuthGuard } from './auth.guard';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations'
@@ -9,7 +10,8 @@ import { LayoutModule } from '@angular/cdk/layout';
 import {
   MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule,
   MatGridListModule, MatInputModule, MatFormFieldModule, MatCardModule, MatDividerModule,
-  MatSnackBarModule, MatProgressSpinnerModule, MatRippleModule, MatBottomSheetModule, MatTableModule, MatPaginatorModule, MatSortModule
+  MatSnackBarModule, MatProgressSpinnerModule, MatRippleModule, MatBottomSheetModule,
+   MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule, MatSelectModule
 } from '@angular/material';
 import { HomeComponent } from './home/home.component';
 
@@ -26,6 +28,10 @@ import { NgForNumberLoopPipe } from './ng-for-number-loop.pipe';
 import { EventSelectionBottomSheetComponent } from './event-selection-bottom-sheet/event-selection-bottom-sheet.component';
 import { SchoolAdminComponent } from './school-admin/school-admin.component';
 import { SchoolAdminStudentsComponent } from './school-admin-students/school-admin-students.component';
+import { SchoolAdminStudentsEditDialogComponent } from './school-admin-students-edit-dialog/school-admin-students-edit-dialog.component';
+import { SchoolAdminHomeComponent } from './school-admin-home/school-admin-home.component';
+import { SchoolAdminEventsComponent } from './school-admin-events/school-admin-events.component';
+import { SchoolAdminEventsParticipantDialogComponent } from './school-admin-events-participant-dialog/school-admin-events-participant-dialog.component';
 
 @NgModule({
   declarations: [
@@ -37,9 +43,16 @@ import { SchoolAdminStudentsComponent } from './school-admin-students/school-adm
     EventSelectionBottomSheetComponent,
     SchoolAdminComponent,
     SchoolAdminStudentsComponent,
+    SchoolAdminStudentsEditDialogComponent,
+    SchoolAdminEventsComponent,
+    SchoolAdminEventsEditDialogComponent,
+    SchoolAdminHomeComponent,
+    SchoolAdminEventsParticipantDialogComponent,
   ],
   entryComponents: [
-    EventSelectionBottomSheetComponent
+    EventSelectionBottomSheetComponent,
+    SchoolAdminStudentsEditDialogComponent,
+    SchoolAdminEventsEditDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -66,6 +79,8 @@ import { SchoolAdminStudentsComponent } from './school-admin-students/school-adm
     MatTableModule,
     MatPaginatorModule,
     MatSortModule,
+    MatDialogModule,
+    MatSelectModule,
     AppRoutingModule,
     SchoolAdminRoutingModule
   ],

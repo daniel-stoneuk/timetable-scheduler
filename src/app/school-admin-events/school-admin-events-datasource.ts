@@ -1,3 +1,4 @@
+import { EventId, Event } from './../home/home.component';
 import { UserDetails } from './../initialise/initialise.component';
 import { AuthService, User } from './../auth.service';
 import { AngularFirestore } from 'angularfire2/firestore';
@@ -9,12 +10,12 @@ import { UserDetailsId } from '../initialise/initialise.component';
 
 // TODO: Replace this with your own data model type
 /**
- * Data source for the SchoolAdminStudents view. This class should
+ * Data source for the SchoolAdminEvents view. This class should
  * encapsulate all logic for fetching and manipulating the displayed data
  * (including sorting, pagination, and filtering).
  */
-export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
-  data: UserDetailsId[] = [];
+export class SchoolAdminEventsDataSource extends DataSource<EventId> {
+  data: EventId[] = [];
 
   constructor(private afs: AngularFirestore, private authService: AuthService, private paginator: MatPaginator, private sort: MatSort) {
     super();
@@ -25,14 +26,14 @@ export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
    * the returned stream emits new items.
    * @returns A stream of the items to be rendered.
    */
-  connect(): Observable<UserDetailsId[]> {
+  connect(): Observable<EventId[]> {
 
     const dataMutations = [
       this.authService.getUser().pipe(first(), flatMap((user) => {
         console.log(user)
-        return this.afs.collection<UserDetailsId>(`schools/${user.school.id}/user-details`).snapshotChanges();
+        return this.afs.collection<EventId>(`schools/${user.school.id}/events`).snapshotChanges();
       })).pipe(map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as UserDetails;
+        const data = a.payload.doc.data() as Event;
         const id = a.payload.doc.id;
         return { id, ...data };
       })), tap((val) => { this.data = val; })),
@@ -61,7 +62,7 @@ export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
    * Paginate the data (client-side). If you're using server-side pagination,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getPagedData(data: UserDetailsId[]) {
+  private getPagedData(data: EventId[]) {
     const startIndex = this.paginator.pageIndex * this.paginator.pageSize;
     return data.splice(startIndex, this.paginator.pageSize);
   }
@@ -70,7 +71,7 @@ export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
    * Sort the data (client-side). If you're using server-side sorting,
    * this would be replaced by requesting the appropriate data from the server.
    */
-  private getSortedData(data: UserDetailsId[]) {
+  private getSortedData(data: EventId[]) {
     if (!this.sort.active || this.sort.direction === '') {
       return data;
     }
@@ -78,10 +79,9 @@ export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
-        case 'displayName': return compare(a.displayName, b.displayName, isAsc);
+        case 'name': return compare(a.name, b.name, isAsc);
         case 'id': return compare(a.id, b.id, isAsc);
-        case 'email': return compare(a.email, b.email, isAsc);
-        case 'requiredSessionCount': return compare(a.requiredSessionCount, b.requiredSessionCount, isAsc);
+        case 'capacity': return compare(a.capacity, b.capacity, isAsc);
         default: return 0;
       }
     });
