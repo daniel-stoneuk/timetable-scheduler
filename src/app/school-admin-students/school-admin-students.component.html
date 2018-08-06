@@ -1,10 +1,12 @@
 <div fxLayout="column">
   <div fxLayout="row" fxLayoutAlign="center center" fxFlexOffset="20px">
-      <button mat-raised-button color="primary" (click)="addStudent()">Add Student</button>
+    <button mat-fab color="primary" (click)="addStudent()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
   <div fxLayout="row" fxLayoutAlign="center" fxFlex="grow" fxFlexOffset="20px">
     <div fxFlex="90%" class="mat-elevation-z1" style="margin-bottom: 1em">
-      <table style="width:100%" mat-table #table [dataSource]="dataSource" matSort aria-label="Elements" >
+      <table style="width:100%" mat-table #table [dataSource]="dataSource" matSort aria-label="Elements">
         <!-- Id Column -->
         <ng-container matColumnDef="id">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Id</th>
@@ -30,7 +32,7 @@
         <ng-container matColumnDef="edit">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Edit</th>
           <td mat-cell *matCellDef="let row">
-            <button mat-raised-button color="primary" (click)="openEditDialog(row)">Edit</button>
+            <button mat-flat-button color="primary" (click)="openEditDialog(row)">Edit</button>
           </td>
         </ng-container>
 

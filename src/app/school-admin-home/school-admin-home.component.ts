@@ -21,7 +21,7 @@ export class SchoolAdminHomeComponent implements OnInit {
   ngOnInit() {
     this.authService.getUser().subscribe((user) => {
       this.user = user;
-      this.afs.collection(this.user.school.parent).doc<School>(this.user.school.id).valueChanges().subscribe(school => {
+      this.afs.collection("/schools").doc<School>(this.user.school).valueChanges().subscribe(school => {
         this.schoolDetailsJson = JSON.stringify(school, null, 4);
       });
     });
@@ -30,7 +30,7 @@ export class SchoolAdminHomeComponent implements OnInit {
   async onSubmit() {
     try {
       let school: School = JSON.parse(this.schoolDetailsJson);
-      let result = await this.afs.collection(`schools`).doc(this.user.school.id).set(school);
+      let result = await this.afs.collection('/schools').doc(this.user.school).set(school);
       this.snackbar.open("Updated", null, { duration: 2000 });
     } catch (err) {
       this.snackbar.open("Error parsing JSON: " + err, null, { duration: 2000 });

@@ -1,7 +1,7 @@
 import { UserDetails } from './initialise/initialise.component';
 import { switchMap, tap } from 'rxjs/operators';
 import { Observable, of } from 'rxjs';
-import { AngularFirestore, DocumentReference } from 'angularfire2/firestore';
+import { AngularFirestore } from 'angularfire2/firestore';
 import { Injectable } from '@angular/core';
 import { AngularFireAuth } from 'angularfire2/auth';
 import { Router } from '@angular/router';
@@ -11,9 +11,9 @@ export interface User {
   email: string;
   initialised?: boolean;
   admin?: boolean;
-  school?: DocumentReference;
+  school?: string;
   schoolAdmin?: boolean;
-  userDetails?: DocumentReference;
+  userDetails?: string;
 }
 
 @Injectable({

@@ -52,7 +52,8 @@ import { SchoolAdminEventsParticipantDialogComponent } from './school-admin-even
   entryComponents: [
     EventSelectionBottomSheetComponent,
     SchoolAdminStudentsEditDialogComponent,
-    SchoolAdminEventsEditDialogComponent
+    SchoolAdminEventsEditDialogComponent,
+    SchoolAdminEventsParticipantDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,

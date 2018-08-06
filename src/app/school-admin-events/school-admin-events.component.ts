@@ -1,3 +1,4 @@
+import { SchoolAdminEventsParticipantDialogComponent } from './../school-admin-events-participant-dialog/school-admin-events-participant-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserDetails, School } from './../initialise/initialise.component';
 import { BreakpointState, Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
@@ -31,12 +32,12 @@ export class SchoolAdminEventsComponent implements OnInit {
   school: School;
 
   ngOnInit() {
-    this.authService.getUser().subscribe((user) => { 
+    this.authService.getUser().subscribe((user) => {
       this.user = user;
-      this.afs.collection(this.user.school.parent).doc<School>(this.user.school.id).valueChanges().subscribe(school => {
+      this.afs.collection('/schools').doc<School>(this.user.school).valueChanges().subscribe(school => {
         this.school = school;
       });
-         });
+    });
     this.dataSource = new SchoolAdminEventsDataSource(this.afs, this.authService, this.paginator, this.sort);
   }
 
@@ -46,32 +47,49 @@ export class SchoolAdminEventsComponent implements OnInit {
 
   async delete(eventId) {
     console.log("Delete Event");
-    this.afs.collection(`schools/${this.user.school.id}/events`).doc(eventId.id).delete()
-        .then(() => this.snackbar.open("Deleted event", null, { duration: 1000 })).catch(() => this.snackbar.open("Failed to delete event", null, { duration: 1000 }));
+    this.afs.collection(`schools/${this.user.school}/events`).doc(eventId.id).delete()
+      .then(() => this.snackbar.open("Deleted event", null, { duration: 1000 })).catch(() => this.snackbar.open("Failed to delete event", null, { duration: 1000 }));
+  }
+  
+  async openParticipantDialog(eventId) {
+    console.log("Open Participant Dialog");
+    let schoolId = this.user.school;
+    let dialogRef = this.matDialog.open(SchoolAdminEventsParticipantDialogComponent, {
+      data: { school: this.school, schoolId: schoolId, eventId: eventId },
+      width: '50%',
+      height: '60%',
+      maxWidth: '100vw',
+      maxHeight: '100vh'
+    });
+    const smallDialogSub = this.isExtraSmall.subscribe(result => {
+      if (result.matches) {
+        dialogRef.updateSize('100%', '100%');
+      } else {
+        dialogRef.updateSize('50%', '50%');
+      }
+    });
+    dialogRef.afterClosed().subscribe(() => smallDialogSub.unsubscribe());
+
   }
 
   async openEditDialog(eventId) {
     console.log("Open Edit Dialog");
-    try {
-      let schoolId = this.user.school.id;
-      console.log("School Id: " + schoolId);
-      let dialogRef = this.matDialog.open(SchoolAdminEventsEditDialogComponent, {
-        data: { school: this.school, schoolId: schoolId, eventId: eventId },
-        width: '50%',
-        height: '60%',
-        maxWidth: '100vw',
-        maxHeight: '100vh'
-      });
-      const smallDialogSub = this.isExtraSmall.subscribe(result => {
-        if (result.matches) {
-          dialogRef.updateSize('100%', '100%');
-        } else {
-          dialogRef.updateSize('50%', '50%');
-        }
-      });
-      dialogRef.afterClosed().subscribe(() => smallDialogSub.unsubscribe());
-    } catch (err) {
-      console.log(err);
-    }
+    let schoolId = this.user.school;
+    let dialogRef = this.matDialog.open(SchoolAdminEventsEditDialogComponent, {
+      data: { school: this.school, schoolId: schoolId, eventId: eventId },
+      width: '50%',
+      height: '60%',
+      maxWidth: '100vw',
+      maxHeight: '100vh'
+    });
+    const smallDialogSub = this.isExtraSmall.subscribe(result => {
+      if (result.matches) {
+        dialogRef.updateSize('100%', '100%');
+      } else {
+        dialogRef.updateSize('50%', '50%');
+      }
+    });
+    dialogRef.afterClosed().subscribe(() => smallDialogSub.unsubscribe());
+
   }
 }

@@ -5,7 +5,7 @@ import { User, AuthService } from '../auth.service';
 import { Observable } from 'rxjs';
 import { map, first } from 'rxjs/operators'
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentData, DocumentReference } from 'angularfire2/firestore';
+import { AngularFirestore, AngularFirestoreCollection, AngularFirestoreDocument, DocumentData } from 'angularfire2/firestore';
 import { MatBottomSheet } from '@angular/material';
 import { EventSelectionBottomSheetComponent } from '../event-selection-bottom-sheet/event-selection-bottom-sheet.component';
 
@@ -62,14 +62,14 @@ export class HomeComponent implements OnInit {
 
     this.authService.getUser().subscribe(user => {
       this.user = user;
-      this.afs.collection(this.user.userDetails.parent).doc<UserDetails>(this.user.userDetails.id).valueChanges().subscribe(userDetails => {
+      this.afs.collection(`schools/${this.user.school}/user-details`).doc<UserDetails>(this.user.userDetails).valueChanges().subscribe(userDetails => {
         console.log("User details called")
         this.userDetails = userDetails;
       });
-      this.afs.collection(this.user.school.parent).doc<School>(this.user.school.id).valueChanges().subscribe(school => {
+      this.afs.collection(`schools`).doc<School>(this.user.school).valueChanges().subscribe(school => {
         this.school = school;
       });
-      this.afs.collection<Event>(`schools/${this.user.school.id}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
+      this.afs.collection<Event>(`schools/${this.user.school}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
         const data = a.payload.doc.data() as EventId;
         const id = a.payload.doc.id;
         return { id, ...data };
@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit {
           if (filtered.length > 0) {
             for (let event of filtered) {
               let selected = false;
-              if (event.participants.includes(this.user.userDetails.id)) {
+              if (event.participants.includes(this.user.userDetails)) {
                 selectedSessionCount++;
                 selected = true;
               }
@@ -115,7 +115,7 @@ export class HomeComponent implements OnInit {
         }
       }
     }
-    console.log(sessions);
+    console.log(selectedSessionCount);
     this.selectedSessionCount = selectedSessionCount;
     this.sessions = sessions;
   }
@@ -131,26 +131,27 @@ export class HomeComponent implements OnInit {
       this.toggleSelection(events[0]);
     } else {
       const bottomSheetRef = this.bottomSheet.open(EventSelectionBottomSheetComponent, {
-        data: { user: this.user, events: events }
+        data: { user: this.user, requiredSessionCount: this.userDetails.requiredSessionCount, selectedSessionCount: this.selectedSessionCount, events: events }
       });
     }
   }
 
-  toggleSelection(event) {
-      const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school.id}/events/${event.event.id}`);
-      let selected = event.event.participants.indexOf(this.user.userDetails.id);
-      if (selected != -1) {
-        event.event.participants.splice(selected, 1);
-      } else if (event.event.participants.length < event.event.capacity) {
-        event.event.participants.push(this.user.userDetails.id);
-      } else if (this.userDetails.requiredSessionCount - this.selectedSessionCount > 0) {
-        this.snackbar.open("This session is full. Try again later.", null, { duration: 2000 });
+  public toggleSelection(event) {
+    const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/events/${event.event.id}`);
+    let selected = event.event.participants.indexOf(this.user.userDetails);
+    if (selected != -1) {
+      event.event.participants.splice(selected, 1);
+    } else if (event.event.participants.length < event.event.capacity) {
+      if (this.userDetails.requiredSessionCount - this.selectedSessionCount > 0) {
+        event.event.participants.push(this.user.userDetails);
       } else {
         this.snackbar.open("You have reached your max number of joined sessions.", null, { duration: 2000 });
       }
-      eventRef.update({
-        participants: event.event.participants
-      });
-    
+    } else if (this.userDetails.requiredSessionCount - this.selectedSessionCount > 0) {
+      this.snackbar.open("This session is full. Try again later.", null, { duration: 2000 });
+    }
+    eventRef.update({
+      participants: event.event.participants
+    });
   }
 }

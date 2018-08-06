@@ -1,3 +1,29 @@
-<p>
-  school-admin-events-participant-dialog works!
-</p>
+<div fxLayout="column">
+  <div fxLayout="row" fxLayoutAlign="center">
+    <div fxLayout="column" fxFlex="95%">
+      <h2 class="mat-title">Participants of {{event.name}}</h2>
+      <mat-spinner *ngIf="!loaded; else loadedView" fxFlexAlign="center"></mat-spinner>
+      <ng-template #loadedView>
+        <div fxLayout="column">
+          <mat-list role="list">
+            <mat-list-item *ngIf="participants.length === 0" role="listitem">Event is empty</mat-list-item>
+            <mat-list-item *ngFor="let participant of participants" role="listitem">
+              <button mat-icon-button (click)="removeParticipant(participant)">
+                <mat-icon>remove_circle_outline</mat-icon>
+              </button>
+              <h3 matLine> {{participant.displayName}} </h3>
+            </mat-list-item>
+          </mat-list>
+          <div class="row" style="margin: 1em">
+            <mat-form-field fxFlex="90% grow">
+              <input matInput [(ngModel)]="addParticipantId" placeholder="Student Id">
+            </mat-form-field>
+            <button mat-icon-button (click)="addParticipant()">
+              <mat-icon>person_add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

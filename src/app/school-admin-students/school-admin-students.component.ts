@@ -41,7 +41,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
   async openEditDialog(userDetailsId) {
     console.log("Open Edit Dialog");
     try {
-      let schoolId = this.user.school.id;
+      let schoolId = this.user.school;
       console.log("School Id: " + schoolId);
       let dialogRef = this.matDialog.open(SchoolAdminStudentsEditDialogComponent, {
         data: { schoolId: schoolId, userDetailsId: userDetailsId },

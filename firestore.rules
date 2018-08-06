@@ -1,0 +1,75 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+  
+    match /users/{userId} {
+      allow create: if isValidUserCreation(userId);
+      allow read: if isOwner(userId);
+      allow update, delete: if isValidUserUpdate(userId);
+    }
+
+    function isValidUserUpdate(userId) {
+      // Needs to be owner
+      
+      return (isOwner(userId) && (!(request.writeFields.hasAny(['schoolAdmin','uid', 'email']))));
+    }
+
+    function isValidUserCreation(userId) {
+      // Needs to be owner
+      return (isSignedIn() && (!(request.writeFields.hasAny(['schoolAdmin']))));
+    }
+    
+    match /schools/{schoolId} {
+      allow read: if isSignedIn();
+      allow update: if signedInWithSchool(schoolId) && getUserData().schoolAdmin;
+    }
+
+    match /schools/{schoolId}/events/{eventsId} {
+      allow read: if signedInWithSchool(schoolId);
+      allow create, delete: if signedInWithSchool(schoolId) && getUserData().schoolAdmin;
+      allow update: if signedInWithSchool(schoolId) && (isValidNonAdminEventUpdate(eventsId) || getUserData().schoolAdmin);
+    }
+
+    match /schools/{schoolId}/user-details/{userDetailsId} {
+      allow read: if (signedInWithSchool(schoolId) && ((getUserData().userDetails == userDetailsId) || getUserData().schoolAdmin)) || (getUserData().email == resource.data.email);
+      allow write: if signedInWithSchool(schoolId) && (getUserData().schoolAdmin);
+    }
+    
+    function isValidNonAdminEventUpdate(eventsId) {
+      // pre: can only change participants
+      // 1st: no change, 2nd: user has added themselves, 3rd: user has removed themselves
+      // 2nd: User not in existing, all existing still there, user in incoming & incoming is only larger by one
+      // 3rd: User in existing, existing has all incoming, not in incoming, incoming is smaller by one
+      return ((request.writeFields.hasAll(['participants']) && (request.writeFields.size() == 1)))
+      && ((incomingData().participants.hasAll(existingData().participants) && (incomingData().size() == existingData().size()))
+      || (!(getUserData().userDetails in existingData().participants) && incomingData().participants.hasAll(existingData().participants) && (getUserData().userDetails in incomingData().participants) && (incomingData().participants.size() == (existingData().participants.size() + 1)))
+      || ((getUserData().userDetails in existingData().participants) && (existingData().participants.hasAll(incomingData().participants)) && (!(getUserData().userDetails in incomingData().participants)) && ((incomingData().participants.size() + 1) == existingData().participants.size())));
+    }
+
+    function signedInWithSchool(schoolId) {
+      return isSignedIn() && (getUserData().school == schoolId);
+    }
+
+    function isOwner(userId) {
+    	return request.auth.uid == userId;
+    }
+    
+    function getUserData() {
+    return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+		function isSignedIn() {
+ 			return request.auth != null;
+		}
+    function existingData() {
+      return resource.data;
+    }
+
+    function incomingData() {
+      return request.resource.data;
+    }
+
+    function currentUserId() {
+      return request.auth.uid;
+    }
+  }
+}

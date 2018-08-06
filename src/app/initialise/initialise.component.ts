@@ -94,13 +94,11 @@ export class InitialiseComponent implements OnInit {
 
   onConfirm(): void {
     const userRef: AngularFirestoreDocument<any> = this.afs.doc(`users/${this.user.uid}`);
-    const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.foundSchool.id}/user-details/${this.foundUserDetails.id}`);
-    const schoolRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.foundSchool.id}`);
     userRef.update({
       initialised: true,
-      userDetails: userDetailsRef.ref,
-      school: schoolRef.ref
-    });
+      userDetails: this.foundUserDetails.id,
+      school: this.foundSchool.id
+    }).catch((err) => console.log(err));
     this.router.navigate(['home']);
   }
 }

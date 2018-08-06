@@ -40,14 +40,16 @@ export class LoginComponent implements OnInit {
 
   async confirmSignIn(url: string) {
     try {
+      console.log("Confirm sign in");
       if (this.afAuth.auth.isSignInWithEmailLink(url)) {
+        console.log("Is correct link");
         let email = window.localStorage.getItem('emailForSignIn');
         if (!email) {
           email = window.prompt('Please provide your email address for confirmation');
         }
         const result = await this.afAuth.auth.signInWithEmailLink(email, url);
         window.localStorage.removeItem('emailForSignIn');
-        this.updateUserData(this.firebaseUser)
+        this.updateUserData(this.firebaseUser);
         if (this.firebaseUser) {
           this.router.navigate(['home']);
         }
@@ -68,13 +70,16 @@ export class LoginComponent implements OnInit {
       email: user.email,
     }
 
+    console.log("Creating user: " + data);
+
     return userRef.set(data, { merge: true })
 
   }
 
   async sendEmailLink() {
     const actionCodeSettings = {
-      url: 'http://localhost:4200/login',
+      // url: 'http://localhost:4200/login',
+      url: 'https://choose-when.daniel-stone.uk/login',
       handleCodeInApp: true
     };
 
@@ -83,7 +88,7 @@ export class LoginComponent implements OnInit {
       this.emailSent = true;
       await this.afAuth.auth.sendSignInLinkToEmail(this.email, actionCodeSettings);
       window.localStorage.setItem('emailForSignIn', this.email);
-      let snackBarRef = this.snackBar.open("Cool! We sent an email to " + this.email + " with your login link. Make sure you use the latest email sent.");
+      let snackBarRef = this.snackBar.open("We sent an email to " + this.email + " with your login link. Use the most recent link. If you did not receive an email, please check your spam or junk folder.");
 
     } catch (err) {
       this.emailSent = false;
