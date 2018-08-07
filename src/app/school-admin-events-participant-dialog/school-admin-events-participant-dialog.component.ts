@@ -36,16 +36,6 @@ export class SchoolAdminEventsParticipantDialogComponent implements OnInit {
   }
 
   async addParticipant() {
-    this.event.participants.push(this.addParticipantId);
-    let update = this.event;
-    // Remove Id from the data we push to firestore!
-    Object.keys(update).reduce((newObj, key) => {
-      if (!update[key].id) {
-        newObj[key] = update[key];
-      }
-      return newObj;
-    }, {});
-
     const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.school.id}/user-details/${this.addParticipantId}`);
     this.afs.firestore.runTransaction(transaction => {
       // This code may get re-run multiple times if there are conflicts.
@@ -61,53 +51,65 @@ export class SchoolAdminEventsParticipantDialogComponent implements OnInit {
         }
       });
     }).then(() => {
+      this.event.participants.push(this.addParticipantId);
+      let update = this.event;
+      // Remove Id from the data we push to firestore!
+      Object.keys(update).reduce((newObj, key) => {
+        if (!update[key].id) {
+          newObj[key] = update[key];
+        }
+        return newObj;
+      }, {});
       this.afs.collection(`schools/${this.data.schoolId}/events`).doc(this.event['id']).update(update)
-      .then(() => {
-        this.snackbar.open("Added user to event", null, { duration: 1000 });
-        this.getNames();
-      }).catch(() => this.snackbar.open("Failed to add user to eventr. Contact support ASAP to resolve.", null, { duration: 1000 }));
+        .then(() => {
+          this.snackbar.open("Added user to event", null, { duration: 1000 });
+          this.getNames();
+        }).catch(() => this.snackbar.open("Failed to add user to event. Contact support ASAP to resolve.", null, { duration: 1000 }));
     }).catch((err) => {
       console.log(err);
-      this.snackbar.open("Failed to add event to userr. Contact support ASAP to resolve.", null, { duration: 1000 })
+      this.snackbar.open("Failed to add event to user. Make sure that the id was correct.", null, { duration: 1000 })
     });
   }
 
   async removeParticipant(participant) {
-    this.event.participants.splice(this.event.participants.indexOf(participant.userDetailId), 1);
-    let update = this.event;
-    // Remove Id from the data we push to firestore!
-    Object.keys(update).reduce((newObj, key) => {
-      if (!update[key].id) {
-        newObj[key] = update[key];
-      }
-      return newObj;
-    }, {});
+
     const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.school.id}/user-details/${participant.userDetailId}`);
     this.afs.firestore.runTransaction(transaction => {
       // This code may get re-run multiple times if there are conflicts.
       return transaction.get(userDetailsRef.ref).then(doc => {
         if (!doc.data().events) {
           transaction.set(userDetailsRef.ref, {
-            events: [this.event.id]
+            events: []
           });
         } else {
           let events: string[] = doc.data().events;
+          console.log(this.event.id);
           let index = events.indexOf(this.event.id);
           if (index != -1) {
-            events = events.splice(index, 1);
+            events.splice(index, 1);
           }
           transaction.update(userDetailsRef.ref, { events: events });
         }
       });
     }).then(() => {
+      this.event.participants.splice(this.event.participants.indexOf(participant.userDetailId), 1);
+      let update = this.event;
+      console.log(this.event.id);
+      // Remove Id from the data we push to firestore!
+      Object.keys(update).reduce((newObj, key) => {
+        if (!update[key].id) {
+          newObj[key] = update[key];
+        }
+        return newObj;
+      }, {});
       this.afs.collection(`schools/${this.data.schoolId}/events`).doc(this.event['id']).update(update)
-      .then(() => {
-        this.snackbar.open("Removed user from event", null, { duration: 1000 });
-        this.getNames();
-      }).catch(() => this.snackbar.open("Failed to remove user from eventr. Contact support ASAP to resolve.", null, { duration: 1000 }));
+        .then(() => {
+          this.snackbar.open("Removed user from event", null, { duration: 1000 });
+          this.getNames();
+        }).catch(() => this.snackbar.open("Failed to remove user from event. Please contact support.", null, { duration: 1000 }));
     }).catch((err) => {
       console.log(err);
-      this.snackbar.open("Failed to remove event from user. Contact support ASAP to resolve.", null, { duration: 1000 })
+      this.snackbar.open("Failed to remove event from user. Please contact support.", null, { duration: 1000 })
     });
   }
 
