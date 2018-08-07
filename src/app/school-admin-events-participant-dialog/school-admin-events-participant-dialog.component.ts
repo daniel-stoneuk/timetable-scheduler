@@ -1,8 +1,8 @@
 import { first } from 'rxjs/operators';
-import { Event } from './../home/home.component';
+import { Event, EventId } from './../home/home.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UserDetailsId, UserDetails, School } from './../initialise/initialise.component';
-import { AngularFirestore } from 'angularfire2/firestore';
+import { UserDetailsId, UserDetails, School, SchoolId } from './../initialise/initialise.component';
+import { AngularFirestore, AngularFirestoreDocument } from 'angularfire2/firestore';
 import { Component, OnInit, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '../../../node_modules/@angular/material';
 import { Subscription } from '../../../node_modules/rxjs';
@@ -19,8 +19,8 @@ export class SchoolAdminEventsParticipantDialogComponent implements OnInit {
     public dialogRef: MatDialogRef<SchoolAdminEventsParticipantDialogComponent>, private snackbar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any) { }
 
-  event: Event;
-  school: School;
+  event: EventId;
+  school: SchoolId;
 
   loaded: boolean = false;
 
@@ -45,12 +45,31 @@ export class SchoolAdminEventsParticipantDialogComponent implements OnInit {
       }
       return newObj;
     }, {});
-    this.afs.collection(`schools/${this.data.schoolId}/events`).doc(this.event['id']).update(update)
+
+    const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.school.id}/user-details/${this.addParticipantId}`);
+    this.afs.firestore.runTransaction(transaction => {
+      // This code may get re-run multiple times if there are conflicts.
+      return transaction.get(userDetailsRef.ref).then(doc => {
+        if (!doc.data().events) {
+          transaction.set(userDetailsRef.ref, {
+            events: [this.event.id]
+          });
+        } else {
+          const events = doc.data().events;
+          events.push(this.event.id);
+          transaction.update(userDetailsRef.ref, { events: events });
+        }
+      });
+    }).then(() => {
+      this.afs.collection(`schools/${this.data.schoolId}/events`).doc(this.event['id']).update(update)
       .then(() => {
-        this.snackbar.open("Updated successfully", null, { duration: 1000 });
+        this.snackbar.open("Added user to event", null, { duration: 1000 });
         this.getNames();
-      }).catch(() => this.snackbar.open("Failed to update", null, { duration: 1000 }));
-  
+      }).catch(() => this.snackbar.open("Failed to add user to eventr. Contact support ASAP to resolve.", null, { duration: 1000 }));
+    }).catch((err) => {
+      console.log(err);
+      this.snackbar.open("Failed to add event to userr. Contact support ASAP to resolve.", null, { duration: 1000 })
+    });
   }
 
   async removeParticipant(participant) {
@@ -63,14 +82,37 @@ export class SchoolAdminEventsParticipantDialogComponent implements OnInit {
       }
       return newObj;
     }, {});
-    this.afs.collection(`schools/${this.data.schoolId}/events`).doc(this.event['id']).update(update)
+    const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.school.id}/user-details/${participant.userDetailId}`);
+    this.afs.firestore.runTransaction(transaction => {
+      // This code may get re-run multiple times if there are conflicts.
+      return transaction.get(userDetailsRef.ref).then(doc => {
+        if (!doc.data().events) {
+          transaction.set(userDetailsRef.ref, {
+            events: [this.event.id]
+          });
+        } else {
+          let events: string[] = doc.data().events;
+          let index = events.indexOf(this.event.id);
+          if (index != -1) {
+            events = events.splice(index, 1);
+          }
+          transaction.update(userDetailsRef.ref, { events: events });
+        }
+      });
+    }).then(() => {
+      this.afs.collection(`schools/${this.data.schoolId}/events`).doc(this.event['id']).update(update)
       .then(() => {
-        this.snackbar.open("Updated successfully", null, { duration: 1000 });
+        this.snackbar.open("Removed user from event", null, { duration: 1000 });
         this.getNames();
-      }).catch(() => this.snackbar.open("Failed to update", null, { duration: 1000 }));
+      }).catch(() => this.snackbar.open("Failed to remove user from eventr. Contact support ASAP to resolve.", null, { duration: 1000 }));
+    }).catch((err) => {
+      console.log(err);
+      this.snackbar.open("Failed to remove event from user. Contact support ASAP to resolve.", null, { duration: 1000 })
+    });
   }
 
   async getNames() {
+    this.loaded = false;
     this.participants = []
     for (const userDetailId of this.event.participants) {
       let userDetail = await this.afs.collection<UserDetails>(`schools/${this.data['schoolId']}/user-details`).doc<UserDetails>(userDetailId).valueChanges().pipe(first()).toPromise();

@@ -8,7 +8,8 @@ import { map, first } from 'rxjs/operators'
 export interface UserDetails {
   displayName: string,
   email: string,
-  requiredSessionCount: number
+  requiredEventCount: number,
+  events: string[]
 }
 
 export interface School {

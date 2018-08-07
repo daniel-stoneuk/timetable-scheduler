@@ -29,7 +29,6 @@ export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
 
     const dataMutations = [
       this.authService.getUser().pipe(first(), flatMap((user) => {
-        console.log(user)
         return this.afs.collection<UserDetailsId>(`schools/${user.school}/user-details`).snapshotChanges();
       })).pipe(map(actions => actions.map(a => {
         const data = a.payload.doc.data() as UserDetails;
@@ -81,7 +80,8 @@ export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
         case 'displayName': return compare(a.displayName.split(' ')[1], b.displayName.split(' ')[1], isAsc);
         case 'id': return compare(a.id, b.id, isAsc);
         case 'email': return compare(a.email, b.email, isAsc);
-        case 'requiredSessionCount': return compare(a.requiredSessionCount, b.requiredSessionCount, isAsc);
+        case 'requiredEventCount': return compare(a.requiredEventCount, b.requiredEventCount, isAsc);
+        case 'eventCount': return compare(a.events.length, b.events.length, isAsc);
         default: return 0;
       }
     });

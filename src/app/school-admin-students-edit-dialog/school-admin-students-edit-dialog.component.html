@@ -14,7 +14,7 @@
           </mat-form-field>
           <mat-form-field appearance="outline">
             <mat-label>Session Count</mat-label>
-            <input matInput type="requiredSessionCount" required [(ngModel)]="userDetails.requiredSessionCount" name="requiredSessionCount">
+            <input matInput type="requiredEventCount" required [(ngModel)]="userDetails.requiredEventCount" name="requiredEventCount">
           </mat-form-field>
         </div>
         <button mat-raised-button type="submit" color="primary" [disabled]="!editDetailsForm.form.valid">Save</button>

@@ -2,7 +2,7 @@
   <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
     <div fxLayout="column" fxFlex="70%" fxFlex.lg="40%" fxFlex.lt-md="95%" fxLayoutGap="0px">
       <h2 class="mat-title" *ngIf="!userDetails">Loading...</h2>
-      <h2 class="mat-title" *ngIf="userDetails">Join {{userDetails.requiredSessionCount - selectedSessionCount}} Directed Study periods.</h2>
+      <h2 class="mat-title" *ngIf="userDetails">Join {{userDetails.requiredEventCount - selectedEventCount}} Directed Study periods.</h2>
       <p *ngIf="userDetails">Click on Directed Study periods to toggle your choices. Make sure they don't clash with any other lessons on your timetable.</p>
     </div>
   </div>

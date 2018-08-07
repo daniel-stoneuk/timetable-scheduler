@@ -24,7 +24,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
   constructor(private breakpointObserver: BreakpointObserver,private afs: AngularFirestore, private authService: AuthService, private matDialog: MatDialog) { }
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['id', 'displayName', 'email', 'requiredSessionCount', 'edit'];
+  displayedColumns = ['id', 'displayName', 'email', 'requiredEventCount', 'eventCount', 'edit'];
 
   user: User;
 

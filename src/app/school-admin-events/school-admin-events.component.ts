@@ -1,8 +1,8 @@
 import { SchoolAdminEventsParticipantDialogComponent } from './../school-admin-events-participant-dialog/school-admin-events-participant-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { UserDetails, School } from './../initialise/initialise.component';
+import { UserDetails, School, SchoolId } from './../initialise/initialise.component';
 import { BreakpointState, Breakpoints, BreakpointObserver } from '@angular/cdk/layout';
-import { first } from 'rxjs/operators';
+import { first, map } from 'rxjs/operators';
 import { AuthService, User } from './../auth.service';
 import { AngularFirestore } from 'angularfire2/firestore';
 import { Component, OnInit, ViewChild } from '@angular/core';
@@ -29,13 +29,13 @@ export class SchoolAdminEventsComponent implements OnInit {
   displayedColumns = ['name', 'capacity', 'participantCount', 'week', 'day', 'session', 'edit'];
 
   user: User;
-  school: School;
+  school: SchoolId;
 
   ngOnInit() {
     this.authService.getUser().subscribe((user) => {
       this.user = user;
-      this.afs.collection('/schools').doc<School>(this.user.school).valueChanges().subscribe(school => {
-        this.school = school;
+      this.afs.collection('/schools').doc<SchoolId>(this.user.school).valueChanges().subscribe(school => {
+        this.school = { id: this.user.school, ...school };
       });
     });
     this.dataSource = new SchoolAdminEventsDataSource(this.afs, this.authService, this.paginator, this.sort);
@@ -50,7 +50,7 @@ export class SchoolAdminEventsComponent implements OnInit {
     this.afs.collection(`schools/${this.user.school}/events`).doc(eventId.id).delete()
       .then(() => this.snackbar.open("Deleted event", null, { duration: 1000 })).catch(() => this.snackbar.open("Failed to delete event", null, { duration: 1000 }));
   }
-  
+
   async openParticipantDialog(eventId) {
     console.log("Open Participant Dialog");
     let schoolId = this.user.school;

@@ -26,23 +26,35 @@ service cloud.firestore {
     match /schools/{schoolId}/events/{eventsId} {
       allow read: if signedInWithSchool(schoolId);
       allow create, delete: if signedInWithSchool(schoolId) && getUserData().schoolAdmin;
-      allow update: if signedInWithSchool(schoolId) && (isValidNonAdminEventUpdate(eventsId) || getUserData().schoolAdmin);
+      allow update: if signedInWithSchool(schoolId) && (isValidNonAdminEventUpdate() || getUserData().schoolAdmin);
     }
 
     match /schools/{schoolId}/user-details/{userDetailsId} {
       allow read: if (signedInWithSchool(schoolId) && ((getUserData().userDetails == userDetailsId) || getUserData().schoolAdmin)) || (getUserData().email == resource.data.email);
-      allow write: if signedInWithSchool(schoolId) && (getUserData().schoolAdmin);
+      allow create, delete: if signedInWithSchool(schoolId) && getUserData().schoolAdmin;
+      allow update: if signedInWithSchool(schoolId) && (isValidNonAdminUserDetailsUpdate() || getUserData().schoolAdmin)
     }
     
-    function isValidNonAdminEventUpdate(eventsId) {
+    function isValidNonAdminEventUpdate() {
       // pre: can only change participants
       // 1st: no change, 2nd: user has added themselves, 3rd: user has removed themselves
       // 2nd: User not in existing, all existing still there, user in incoming & incoming is only larger by one
       // 3rd: User in existing, existing has all incoming, not in incoming, incoming is smaller by one
-      return ((request.writeFields.hasAll(['participants']) && (request.writeFields.size() == 1)))
+      return (getUserData().userDetails == userDetailsId) && ((request.writeFields.hasAll(['participants']) && (request.writeFields.size() == 1)))
       && ((incomingData().participants.hasAll(existingData().participants) && (incomingData().size() == existingData().size()))
       || (!(getUserData().userDetails in existingData().participants) && incomingData().participants.hasAll(existingData().participants) && (getUserData().userDetails in incomingData().participants) && (incomingData().participants.size() == (existingData().participants.size() + 1)))
       || ((getUserData().userDetails in existingData().participants) && (existingData().participants.hasAll(incomingData().participants)) && (!(getUserData().userDetails in incomingData().participants)) && ((incomingData().participants.size() + 1) == existingData().participants.size())));
+    }
+
+     function isValidNonAdminUserDetailsUpdate() {
+      // pre: can only change participants
+      // 1st: no change, 2nd: user has added themselves, 3rd: user has removed themselves
+      // 2nd: all existing still there, incoming is only larger by one
+      // 3rd: existing has all incoming, incoming is smaller by one
+      return ((request.writeFields.hasAll(['events']) && (request.writeFields.size() == 1)))
+      && ((incomingData().events.hasAll(existingData().events) && (incomingData().size() == existingData().size()))
+      || (incomingData().events.hasAll(existingData().events) &&  (incomingData().events.size() == (existingData().events.size() + 1)))
+      || ((existingData().events.hasAll(incomingData().events)) && ((incomingData().events.size() + 1) == existingData().events.size())));
     }
 
     function signedInWithSchool(schoolId) {

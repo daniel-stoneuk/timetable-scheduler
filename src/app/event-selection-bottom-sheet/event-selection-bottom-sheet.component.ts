@@ -22,18 +22,16 @@ export class EventSelectionBottomSheetComponent implements OnInit {
   evs; // wrapped events
 
   user: User;
-  requiredSessionCount: number;
-  selectedSessionCount: number;
+  userDetails: UserDetails;
+  selectedEventCount: number;
 
   eventUpdateSub: Subscription;
 
   ngOnInit() {
     this.user = this.data['user'];
-    this.requiredSessionCount = this.data['requiredSessionCount'];
-    this.selectedSessionCount = this.data['selectedSessionCount'];
+    this.userDetails = this.data['userDetails'];
+    this.selectedEventCount = this.data['selectedEventCount'];
     this.evs = this.data['events'];
-
-    console.log(this.data);
 
     this.eventUpdateSub = this.afs.collection<EventId>(`schools/${this.user.school}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
       const data = a.payload.doc.data() as EventId;
@@ -61,41 +59,57 @@ export class EventSelectionBottomSheetComponent implements OnInit {
   }
 
   onSelection(event) {
+    const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/user-details/${this.user.userDetails}`);
     for (let ev of this.evs) {
       const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/events/${ev.event.id}`);
-      let selected = ev.event.participants.indexOf(this.user.userDetails);
-      if (selected != -1) {
-        this.selectedSessionCount = this.selectedSessionCount - 1;
-      } 
+      let eventParticipantIndex = ev.event.participants.indexOf(this.user.userDetails);
+      if (eventParticipantIndex != -1) {
+        this.selectedEventCount = this.selectedEventCount - 1;
+      }
     }
     for (let ev of this.evs) {
       const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/events/${ev.event.id}`);
-      let selected = ev.event.participants.indexOf(this.user.userDetails);
+      let eventParticipantIndex = ev.event.participants.indexOf(this.user.userDetails);
+      let userDetailsEventIndex = this.userDetails.events.indexOf(ev.event.id);
       if (event.event.id === ev.event.id) {
-        if (selected != -1) {
-          ev.event.participants.splice(selected, 1);
+        if (eventParticipantIndex != -1 && userDetailsEventIndex != -1) {
+          event.event.participants.splice(eventParticipantIndex, 1);
+          this.userDetails.events.splice(userDetailsEventIndex, 1);
+          userDetailsRef.update({
+            events: this.userDetails.events
+          })
           eventRef.update({
             participants: ev.event.participants
           });
         } else if (event.event.participants.length < event.event.capacity) {
-          if (this.requiredSessionCount - this.selectedSessionCount > 0) {
-            ev.event.participants.push(this.user.userDetails);
+          if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
+            event.event.participants.push(this.user.userDetails);
+            this.userDetails.events.push(event.event.id);
+            userDetailsRef.update({
+              events: this.userDetails.events
+            });
             eventRef.update({
               participants: ev.event.participants
             });
-            this.selectedSessionCount = this.selectedSessionCount + 1;
+            this.selectedEventCount = this.selectedEventCount + 1;
           } else {
-            this.snackbar.open("You have reached your max number of joined sessions.", null, { duration: 2000 });
+            this.snackbar.open("You have reached your max number of joined events.", null, { duration: 2000 });
           }
-        } else if (this.requiredSessionCount - this.selectedSessionCount > 0) {
-          this.snackbar.open("This session is full. Try again later.", null, { duration: 2000 });
+        } else if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
+          this.snackbar.open("This event is full. Try again later.", null, { duration: 2000 });
         }
-      } else if (selected != -1) {
-        ev.event.participants.splice(selected, 1);
+      } else if (eventParticipantIndex != -1 && userDetailsEventIndex != -1) {
+        ev.event.participants.splice(eventParticipantIndex, 1);
+        this.userDetails.events.splice(userDetailsEventIndex, 1);
+        userDetailsRef.update({
+          events: this.userDetails.events
+        })
         eventRef.update({
           participants: ev.event.participants
         });
       }
     }
+
+
   }
 }

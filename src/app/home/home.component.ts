@@ -42,7 +42,7 @@ export class HomeComponent implements OnInit {
 
   user: User;
   userDetails: UserDetails;
-  selectedSessionCount: number;
+  selectedEventCount: number;
   school: School;
   isHandset: boolean = false;
 
@@ -61,12 +61,14 @@ export class HomeComponent implements OnInit {
     });
 
     this.authService.getUser().subscribe(user => {
+      console.log("Received an updated school object")
       this.user = user;
       this.afs.collection(`schools/${this.user.school}/user-details`).doc<UserDetails>(this.user.userDetails).valueChanges().subscribe(userDetails => {
-        console.log("User details called")
+        console.log("Received an updated userDetails object")
         this.userDetails = userDetails;
       });
       this.afs.collection(`schools`).doc<School>(this.user.school).valueChanges().subscribe(school => {
+        console.log("Received an updated school object")
         this.school = school;
       });
       this.afs.collection<Event>(`schools/${this.user.school}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
@@ -74,6 +76,7 @@ export class HomeComponent implements OnInit {
         const id = a.payload.doc.id;
         return { id, ...data };
       }))).subscribe(events => {
+        console.log("Received an updated events object")
         this.events = events;
         this.calculateSessions()
       });
@@ -85,7 +88,7 @@ export class HomeComponent implements OnInit {
     let weekCount = this.school.timetable.weekData.names.length;
     let dayCount = this.school.timetable.dayData.names.length;
     let sessionCount = this.school.timetable.sessionData.count;
-    let selectedSessionCount = 0;
+    let selectedEventCount = 0;
     for (var week = 0; week < weekCount; week++) {
       sessions[week] = [];
       for (var day = 0; day < dayCount; day++) {
@@ -99,7 +102,7 @@ export class HomeComponent implements OnInit {
             for (let event of filtered) {
               let selected = false;
               if (event.participants.includes(this.user.userDetails)) {
-                selectedSessionCount++;
+                selectedEventCount++;
                 selected = true;
               }
               events.push({ event: event, selected: selected });
@@ -115,8 +118,8 @@ export class HomeComponent implements OnInit {
         }
       }
     }
-    console.log(selectedSessionCount);
-    this.selectedSessionCount = selectedSessionCount;
+    console.log("Selected " + selectedEventCount + " events");
+    this.selectedEventCount = selectedEventCount;
     this.sessions = sessions;
   }
 
@@ -131,25 +134,32 @@ export class HomeComponent implements OnInit {
       this.toggleSelection(events[0]);
     } else {
       const bottomSheetRef = this.bottomSheet.open(EventSelectionBottomSheetComponent, {
-        data: { user: this.user, requiredSessionCount: this.userDetails.requiredSessionCount, selectedSessionCount: this.selectedSessionCount, events: events }
+        data: { user: this.user, userDetails: this.userDetails, selectedEventCount: this.selectedEventCount, events: events }
       });
     }
   }
 
   public toggleSelection(event) {
+    const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/user-details/${this.user.userDetails}`);
     const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/events/${event.event.id}`);
-    let selected = event.event.participants.indexOf(this.user.userDetails);
-    if (selected != -1) {
-      event.event.participants.splice(selected, 1);
+    let eventParticipantIndex = event.event.participants.indexOf(this.user.userDetails);
+    let userDetailsEventIndex = this.userDetails.events.indexOf(event.event.id);
+    if (eventParticipantIndex != -1 && userDetailsEventIndex != -1) {
+      event.event.participants.splice(eventParticipantIndex, 1);
+      this.userDetails.events.splice(userDetailsEventIndex, 1);
     } else if (event.event.participants.length < event.event.capacity) {
-      if (this.userDetails.requiredSessionCount - this.selectedSessionCount > 0) {
+      if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
         event.event.participants.push(this.user.userDetails);
+        this.userDetails.events.push(event.event.id);
       } else {
-        this.snackbar.open("You have reached your max number of joined sessions.", null, { duration: 2000 });
+        this.snackbar.open("You have reached your max number of joined events.", null, { duration: 2000 });
       }
-    } else if (this.userDetails.requiredSessionCount - this.selectedSessionCount > 0) {
-      this.snackbar.open("This session is full. Try again later.", null, { duration: 2000 });
+    } else if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
+      this.snackbar.open("This event is full. Try again later.", null, { duration: 2000 });
     }
+    userDetailsRef.update({
+      events: this.userDetails.events
+    })
     eventRef.update({
       participants: event.event.participants
     });
