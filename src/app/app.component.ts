@@ -37,10 +37,6 @@ export class AppComponent implements OnInit {
         } else {
           this.schoolAdmin = false;
         }
-        // Check if user is initialised
-        if (!this.user.initialised) {
-          this.router.navigate(['initialise']);
-        }
       }
     });
   }

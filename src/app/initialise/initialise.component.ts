@@ -54,7 +54,6 @@ export class InitialiseComponent implements OnInit {
       this.user = user;
       if (this.user) {
         if (this.user.initialised) this.router.navigate(['home']);
-        console.log("Hello!");
         this.findUserDetails();
       }
     })

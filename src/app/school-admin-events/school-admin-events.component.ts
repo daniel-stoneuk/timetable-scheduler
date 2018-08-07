@@ -1,3 +1,4 @@
+import { EventId } from './../home/home.component';
 import { SchoolAdminEventsParticipantDialogComponent } from './../school-admin-events-participant-dialog/school-admin-events-participant-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserDetails, School, SchoolId } from './../initialise/initialise.component';
@@ -45,10 +46,14 @@ export class SchoolAdminEventsComponent implements OnInit {
     this.openEditDialog(undefined);
   }
 
-  async delete(eventId) {
-    console.log("Delete Event");
-    this.afs.collection(`schools/${this.user.school}/events`).doc(eventId.id).delete()
-      .then(() => this.snackbar.open("Deleted event", null, { duration: 1000 })).catch(() => this.snackbar.open("Failed to delete event", null, { duration: 1000 }));
+  async delete(eventId: EventId) {
+    if (eventId.participants.length == 0) {
+      console.log("Delete Event");
+      this.afs.collection(`schools/${this.user.school}/events`).doc(eventId.id).delete()
+        .then(() => this.snackbar.open("Deleted event", null, { duration: 1000 })).catch(() => this.snackbar.open("Failed to delete event", null, { duration: 1000 }));
+    } else {
+      this.snackbar.open("Cannot delete event with participants", null, { duration: 1000 })
+    }
   }
 
   async openParticipantDialog(eventId) {

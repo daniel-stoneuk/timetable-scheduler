@@ -66,20 +66,22 @@ export class HomeComponent implements OnInit {
       this.afs.collection(`schools/${this.user.school}/user-details`).doc<UserDetails>(this.user.userDetails).valueChanges().subscribe(userDetails => {
         console.log("Received an updated userDetails object")
         this.userDetails = userDetails;
-      });
-      this.afs.collection(`schools`).doc<School>(this.user.school).valueChanges().subscribe(school => {
-        console.log("Received an updated school object")
-        this.school = school;
-      });
-      this.afs.collection<Event>(`schools/${this.user.school}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
-        const data = a.payload.doc.data() as EventId;
-        const id = a.payload.doc.id;
-        return { id, ...data };
-      }))).subscribe(events => {
-        console.log("Received an updated events object")
-        this.events = events;
-        this.calculateSessions()
-      });
+        this.afs.collection(`schools`).doc<School>(this.user.school).valueChanges().subscribe(school => {
+          console.log("Received an updated school object")
+          this.school = school;
+          this.afs.collection<Event>(`schools/${this.user.school}/events`).snapshotChanges().pipe(map(actions => actions.map(a => {
+            const data = a.payload.doc.data() as EventId;
+            const id = a.payload.doc.id;
+            return { id, ...data };
+          }))).subscribe(events => {
+            console.log("Received an updated events object")
+            this.events = events;
+            this.calculateSessions()
+          }, (err)=>console.log(err));
+        }, (err)=>console.log(err));
+        
+      }, (err)=>console.log(err));
+      
     });
   }
 
@@ -159,9 +161,9 @@ export class HomeComponent implements OnInit {
     }
     userDetailsRef.update({
       events: this.userDetails.events
-    })
+    }).catch((err)=>console.log(err));
     eventRef.update({
       participants: event.event.participants
-    });
+    }).catch((err)=>console.log(err));
   }
 }
