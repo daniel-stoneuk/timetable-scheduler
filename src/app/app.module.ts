@@ -11,7 +11,7 @@ import {
   MatToolbarModule, MatButtonModule, MatSidenavModule, MatIconModule, MatListModule,
   MatGridListModule, MatInputModule, MatFormFieldModule, MatCardModule, MatDividerModule,
   MatSnackBarModule, MatProgressSpinnerModule, MatRippleModule, MatBottomSheetModule,
-   MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule, MatSelectModule
+   MatTableModule, MatPaginatorModule, MatSortModule, MatDialogModule, MatSelectModule, MatProgressBarModule
 } from '@angular/material';
 import { HomeComponent } from './home/home.component';
 
@@ -82,6 +82,7 @@ import { SchoolAdminEventsParticipantDialogComponent } from './school-admin-even
     MatSortModule,
     MatDialogModule,
     MatSelectModule,
+    MatProgressBarModule,
     AppRoutingModule,
     SchoolAdminRoutingModule
   ],
