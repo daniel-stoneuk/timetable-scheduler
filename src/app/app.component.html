@@ -1,13 +1,20 @@
-<mat-toolbar color="primary" [class.mat-elevation-z6]="loggedIn">
-  <span routerLink="/home">Choose When</span>
-  <span class="spacer"></span>
-  <button mat-icon-button class="icon" *ngIf="loggedIn && schoolAdmin" routerLink="/school-admin">
-    <mat-icon>build</mat-icon>
-  </button>
-  <button mat-icon-button class="icon" *ngIf="loggedIn" (click)="authService.logout()">
-    <mat-icon>exit_to_app</mat-icon>
-  </button>
-</mat-toolbar>
-<div id="content" class="backgroundFill" [class.primaryFill]="!loggedIn">
-  <router-outlet></router-outlet>
+<div id="container" [class.backgroundFill]="loggedIn" [class.primaryFill]="!loggedIn">
+  <mat-toolbar color="primary" [class.mat-elevation-z6]="loggedIn">
+    <span routerLink="/home">Choose When</span>
+    <span class="spacer"></span>
+    <button mat-icon-button class="icon" *ngIf="loggedIn && schoolAdmin" routerLink="/school-admin">
+      <mat-icon>build</mat-icon>
+    </button>
+    <button mat-icon-button class="icon" *ngIf="loggedIn" (click)="authService.logout()">
+      <mat-icon>exit_to_app</mat-icon>
+    </button>
+  </mat-toolbar>
+  <div id="body">
+    <router-outlet></router-outlet>
+  </div>
+  <div id="footer" [class.backgroundFill]="loggedIn" [class.primaryFill]="!loggedIn">
+    <p>Made with ❤️by
+      <a href="https://daniel-stone.uk">Daniel Stone</a>
+    </p>
+  </div>
 </div>
