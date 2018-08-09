@@ -13,7 +13,7 @@ mat-toolbar .spacer {
 }
 
 #app-title {
-  font-family: 'Montserrat Alternates', sans-serif;
+  font-family: "Montserrat Alternates", sans-serif;
 }
 
 .backgroundFill {
@@ -22,6 +22,7 @@ mat-toolbar .spacer {
 
 .primaryFill {
   background-color: #3f51b5;
+  background-image: linear-gradient(0deg, #00b0ff 20%, #3f51b5 80%);
 }
 
 #container {
@@ -39,11 +40,12 @@ mat-toolbar .spacer {
   color: #212121;
 }
 #footer.backgroundFill {
-  background-color: #E0E0E0 !important;
+  background-color: #EEEEEE !important;
   color: #212121;
 }
 #footer.primaryFill {
-  background-color: #7986CB !important;
+  background-color: #00b0ff !important;
+  background-image: none;
   color: #ffffff;
 }
 #footer p {
@@ -60,6 +62,9 @@ mat-toolbar .spacer {
 }
 #footer.backgroundFill p :link {
   color: #212121;
+}
+#footer p :visited {
+  color: inherit;
 }
 #footer p :hover {
   color: #12dd99;

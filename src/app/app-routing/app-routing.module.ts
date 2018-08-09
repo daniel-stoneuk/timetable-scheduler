@@ -1,3 +1,4 @@
+import { PrivacyPolicyComponent } from './../privacy-policy/privacy-policy.component';
 import { LoginComponent } from '../login/login.component';
 import { HomeComponent } from '../home/home.component';
 import { NgModule } from '@angular/core';
@@ -12,6 +13,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent},
   { path: 'initialise', component: InitialiseComponent, canActivate: [AuthGuard] },
   { path: 'home', component: HomeComponent, canActivate: [AuthGuard] },
+  { path: 'privacy-policy', component: PrivacyPolicyComponent},
 ]
 
 @NgModule({

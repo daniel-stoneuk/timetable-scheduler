@@ -32,6 +32,7 @@ import { SchoolAdminStudentsEditDialogComponent } from './school-admin-students-
 import { SchoolAdminHomeComponent } from './school-admin-home/school-admin-home.component';
 import { SchoolAdminEventsComponent } from './school-admin-events/school-admin-events.component';
 import { SchoolAdminEventsParticipantDialogComponent } from './school-admin-events-participant-dialog/school-admin-events-participant-dialog.component';
+import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +49,7 @@ import { SchoolAdminEventsParticipantDialogComponent } from './school-admin-even
     SchoolAdminEventsEditDialogComponent,
     SchoolAdminHomeComponent,
     SchoolAdminEventsParticipantDialogComponent,
+    PrivacyPolicyComponent,
   ],
   entryComponents: [
     EventSelectionBottomSheetComponent,
