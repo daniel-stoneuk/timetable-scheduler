@@ -46,6 +46,7 @@ export class InitialiseComponent implements OnInit {
   foundSchool: SchoolId;
   foundUserDetails: UserDetailsId;
   couldNotFindDetails: boolean = false;
+  couldNotFindSchool: boolean = false;
 
   constructor(private afs: AngularFirestore, private authService: AuthService, private router: Router) { }
 
@@ -81,9 +82,11 @@ export class InitialiseComponent implements OnInit {
         if (userDetails.length > 0) {
           this.foundUserDetails = userDetails[0];
         } else {
+          this.couldNotFindSchool = false;
           throw { "Error": "Details not found" }
         }
       } else {
+        this.couldNotFindSchool = true;
         throw { "Error": "No schools found" };
       }
     } catch (err) {

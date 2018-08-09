@@ -4,8 +4,7 @@
       <mat-card>
         <form (ngSubmit)="sendEmailLink()" #loginForm="ngForm">
           <div fxLayout="column">
-
-            <h2 class="mat-title">Sign In With Your School Email</h2>
+            <h2 id="login-title" class="mat-title">Sign in with your school email</h2>
             <mat-form-field appearance="fill">
               <mat-label>Email Address</mat-label>
               <input matInput type="email" required [(ngModel)]="email" name="email" [disabled]="emailSent" placeholder="me@example.com">

@@ -14,6 +14,7 @@ mat-toolbar .spacer {
 
 #app-title {
   font-family: "Montserrat Alternates", sans-serif;
+  font-weight: 600;
 }
 
 .backgroundFill {

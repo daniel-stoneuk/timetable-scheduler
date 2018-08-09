@@ -3,16 +3,19 @@
     <div fxFlex.lg="40%" fxFlex.md="60%" fxFlex.lt-md="95%">
       <mat-card>
         <div fxLayout="column">
-          <h1 class="mat-headline">Welcome to Choose When</h1>
           <mat-spinner *ngIf="!couldNotFindDetails && !foundUserDetails" fxFlexAlign="center"></mat-spinner>
-          <div *ngIf="couldNotFindDetails">
-              <h2 class="mat-title">Something went wrong.</h2>
+          <div *ngIf="couldNotFindDetails && couldNotFindSchool">
+              <h2 id="initialise-title" class="mat-title">Something went wrong.</h2>
             <p>It doesn't look like there are any details linked to {{user.email}}. Please make sure that you have registered
               with your
               <strong>school email</strong> and contact your school if required. Log out with the button in the top right.</p>
           </div>
+          <div *ngIf="couldNotFindDetails && !couldNotFindSchool">
+            <h2 id="initialise-title" class="mat-title">Your email has not been set up yet.</h2>
+          <p>Your school has not set up your email ({{user.email}}) yet. Please contact your school to continue.</p>
+        </div>
           <div *ngIf="foundUserDetails">
-            <h2 class="mat-title">Hi {{foundUserDetails.displayName}}!</h2>
+            <h2 id="initialise-title" class="mat-title">Hi {{foundUserDetails.displayName}}!</h2>
             <p>We've found some details linked to your email address. Please confirm that these are correct to continue.</p>
             <ul>
               <li>You go to <strong>{{foundSchool.name}}</strong></li>
