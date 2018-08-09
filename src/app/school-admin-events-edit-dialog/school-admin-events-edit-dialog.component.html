@@ -13,6 +13,7 @@
             <input matInput type="email" required [(ngModel)]="event.capacity" name="capacity">
           </mat-form-field>
           <mat-form-field appearance="fill">
+            <mat-label>Week</mat-label>
             <mat-select required placeholder="Week" [(ngModel)]="event.timetablePosition.week" name="week">
               <mat-option *ngFor="let week of school.timetable.weekData.names.length | ngForNumberLoop" [value]="week">
                 {{school.timetable.weekData.names[week]}}
@@ -20,19 +21,21 @@
             </mat-select>
           </mat-form-field>
           <mat-form-field appearance="fill">
-              <mat-select required placeholder="Day" [(ngModel)]="event.timetablePosition.day" name="day">
-                <mat-option *ngFor="let day of school.timetable.dayData.names.length | ngForNumberLoop" [value]="day">
-                  {{school.timetable.dayData.names[day]}}
-                </mat-option>
-              </mat-select>
-            </mat-form-field>
-            <mat-form-field appearance="fill">
-                <mat-select required placeholder="Session" [(ngModel)]="event.timetablePosition.session" name="session">
-                  <mat-option *ngFor="let session of school.timetable.sessionData.count | ngForNumberLoop" [value]="session">
-                    {{session + 1}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
+            <mat-label>Day</mat-label>
+            <mat-select required placeholder="Day" [(ngModel)]="event.timetablePosition.day" name="day">
+              <mat-option *ngFor="let day of school.timetable.dayData.names.length | ngForNumberLoop" [value]="day">
+                {{school.timetable.dayData.names[day]}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+          <mat-form-field appearance="fill">
+            <mat-label>Session</mat-label>
+            <mat-select required placeholder="Session" [(ngModel)]="event.timetablePosition.session" name="session">
+              <mat-option *ngFor="let session of school.timetable.sessionData.count | ngForNumberLoop" [value]="session">
+                {{session + 1}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
         </div>
         <button mat-raised-button type="submit" color="primary" [disabled]="!editDetailsForm.form.valid">Save</button>
       </form>
