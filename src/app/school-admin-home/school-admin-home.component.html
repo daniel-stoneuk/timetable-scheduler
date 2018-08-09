@@ -5,7 +5,7 @@
       <p class="mat-subheading-2">Only change this if you know what you're doing</p>
       <form fxLayout="row" fxFlex="100%" (ngSubmit)="onSubmit()" #schoolDetailsForm="ngForm">
         <div fxLayout="column" fxFlexFill>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>School Details (JSON)</mat-label>
             <textarea matTextareaAutosize matInput type="text" required [(ngModel)]="schoolDetailsJson" name="schoolDetailsJson"></textarea>
           </mat-form-field>

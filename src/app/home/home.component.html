@@ -1,14 +1,14 @@
 <div fxLayout="column" style="padding-bottom: 2em">
   <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
-    <div fxLayout="column" fxFlex="70%" fxFlex.lg="40%" fxFlex.lt-md="95%" fxLayoutGap="0px">
+    <div fxLayout="column" fxFlex.lg="40%" fxFlex.md="60%" fxFlex.lt-md="95%" fxLayoutGap="0px">
       <mat-progress-bar mode="indeterminate" *ngIf="events == undefined"></mat-progress-bar>
-      <h2 class="mat-title" *ngIf="events != undefined">Join {{userDetails.requiredEventCount - selectedEventCount}} Directed Study periods.</h2>
+      <h2 id="title" class="mat-title" *ngIf="events != undefined">Join {{userDetails.requiredEventCount - selectedEventCount}} Directed Study periods.</h2>
       <p *ngIf="events != undefined">Click on Directed Study periods to toggle your choices. Make sure they don't clash with any other lessons on your timetable.</p>
     </div>
   </div>
   <ng-container *ngIf="sessions">
     <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center" *ngFor="let weekIndex of school?.timetable.weekData.names.length | ngForNumberLoop">
-      <div fxFlex="70%" fxFlex.lg="40%" fxFlex.lt-md="95%">
+      <div fxFlex.lg="40%" fxFlex.md="60%" fxFlex.lt-md="95%">
         <mat-card>
           <h2 class="mat-title">{{school?.timetable.weekData.names[weekIndex]}}</h2>
           <mat-grid-list [cols]="school?.timetable.dayData.names.length" rowHeight="{{isHandset ? '1:1' : '3:1' }}">

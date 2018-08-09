@@ -4,29 +4,29 @@
       <form (ngSubmit)="onSubmit()" #editDetailsForm="ngForm">
         <div fxLayout="column">
           <h2 class="mat-title">Edit Details</h2>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
             <input matInput type="text" required [(ngModel)]="event.name" name="name">
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Capacity</mat-label>
             <input matInput type="email" required [(ngModel)]="event.capacity" name="capacity">
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-select required placeholder="Week" [(ngModel)]="event.timetablePosition.week" name="week">
               <mat-option *ngFor="let week of school.timetable.weekData.names.length | ngForNumberLoop" [value]="week">
                 {{school.timetable.weekData.names[week]}}
               </mat-option>
             </mat-select>
           </mat-form-field>
-          <mat-form-field>
+          <mat-form-field appearance="fill">
               <mat-select required placeholder="Day" [(ngModel)]="event.timetablePosition.day" name="day">
                 <mat-option *ngFor="let day of school.timetable.dayData.names.length | ngForNumberLoop" [value]="day">
                   {{school.timetable.dayData.names[day]}}
                 </mat-option>
               </mat-select>
             </mat-form-field>
-            <mat-form-field>
+            <mat-form-field appearance="fill">
                 <mat-select required placeholder="Session" [(ngModel)]="event.timetablePosition.session" name="session">
                   <mat-option *ngFor="let session of school.timetable.sessionData.count | ngForNumberLoop" [value]="session">
                     {{session + 1}}

@@ -4,15 +4,15 @@
       <form (ngSubmit)="onSubmit()" #editDetailsForm="ngForm">
         <div fxLayout="column">
           <h2 class="mat-title">Edit Details</h2>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Name</mat-label>
             <input matInput type="text" required [(ngModel)]="userDetails.displayName" name="displayName">
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Email</mat-label>
             <input matInput type="email" required [(ngModel)]="userDetails.email" name="email">
           </mat-form-field>
-          <mat-form-field appearance="outline">
+          <mat-form-field appearance="fill">
             <mat-label>Session Count</mat-label>
             <input matInput type="requiredEventCount" required [(ngModel)]="userDetails.requiredEventCount" name="requiredEventCount">
           </mat-form-field>

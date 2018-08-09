@@ -3,6 +3,11 @@ mat-grid-tile {
     text-align: center;
 }
 
+#title {
+    font-family: 'Montserrat Alternates', sans-serif;
+    font-weight: 600;
+}
+
 .break {
     background: #ffffff;
 }

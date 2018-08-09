@@ -1,6 +1,6 @@
 <div id="container" [class.backgroundFill]="loggedIn" [class.primaryFill]="!loggedIn">
   <mat-toolbar color="primary" [class.mat-elevation-z6]="loggedIn">
-    <span routerLink="/home">Choose When</span>
+    <span id="app-title" routerLink="/home">Choose When</span>
     <span class="spacer"></span>
     <button mat-icon-button class="icon" *ngIf="loggedIn && schoolAdmin" routerLink="/school-admin">
       <mat-icon>build</mat-icon>
