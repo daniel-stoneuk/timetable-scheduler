@@ -3,9 +3,9 @@ import { Component, OnInit } from "@angular/core";
 @Component({
   selector: "privacy-policy",
   template: `
-  <div fxLayout="row" fxLayoutAlign="center">
-  <div fxFlex.lg="40%" fxFlex.md="60%" fxFlex.lt-md="95%">
-
+  <div fxLayout="row" fxLayoutAlign="center" style="padding-top:1em;padding-bottom:1em;">
+  <div fxFlex.lg="40%" fxFlex.md="60%" fxFlex.lt-md="95%" >
+  <mat-card>
 <h1 id="toc_0">Choose When Privacy Policy</h1>
 
 <p>Last Updated 09/08/2018</p>
@@ -68,7 +68,8 @@ import { Component, OnInit } from "@angular/core";
 
 <h3 id="toc_9">Endnotes</h3>
 
-<p>I have written this privacy policy with a very limited understanding of the law, therefore if there are any sections that require clarification please contact me at support@daniel-stone.uk</p>
+<p>If there are any sections that require clarification please contact me at support@daniel-stone.uk</p>
+</mat-card>
 </div>  
 </div>
 `,

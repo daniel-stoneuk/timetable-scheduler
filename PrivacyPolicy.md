@@ -46,4 +46,4 @@ You can delete your account and data about you that's stored on the system by co
 Choose When may periodically update this policy. When there is a significant change, I will notify users through the website in the form of a message. The version of this privacy policy can be seen at the top.
 
 ### Endnotes
-I have written this privacy policy with a very limited understanding of the law, therefore if there are any sections that require clarification please contact me at support@daniel-stone.uk
+If there are any sections that require clarification please contact me at support@daniel-stone.uk
