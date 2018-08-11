@@ -12,6 +12,7 @@ import { EventSelectionBottomSheetComponent } from '../event-selection-bottom-sh
 export interface Event {
   capacity: number;
   name: string;
+  subtitle: string;
   timetablePosition: {
     day: number;
     session: number;

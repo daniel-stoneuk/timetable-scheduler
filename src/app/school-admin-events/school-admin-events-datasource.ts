@@ -5,9 +5,8 @@ import { AngularFirestore } from 'angularfire2/firestore';
 import { DataSource } from '@angular/cdk/collections';
 import { MatPaginator, MatSort } from '@angular/material';
 import { map, first, tap, flatMap } from 'rxjs/operators';
-import { Observable, of, merge, from } from 'rxjs';
+import { Observable, Subscription, of, merge, from } from 'rxjs';
 import { UserDetailsId } from '../initialise/initialise.component';
-
 // TODO: Replace this with your own data model type
 /**
  * Data source for the SchoolAdminEvents view. This class should
@@ -16,10 +15,13 @@ import { UserDetailsId } from '../initialise/initialise.component';
  */
 export class SchoolAdminEventsDataSource extends DataSource<EventId> {
   data: EventId[] = [];
+  sub: Subscription;
 
   constructor(private afs: AngularFirestore, private authService: AuthService, private paginator: MatPaginator, private sort: MatSort) {
     super();
   }
+
+  
 
   /**
    * Connect this data source to the table. The table will only update when
@@ -81,6 +83,7 @@ export class SchoolAdminEventsDataSource extends DataSource<EventId> {
       switch (this.sort.active) {
         case 'name': return compare(a.name, b.name, isAsc);
         case 'id': return compare(a.id, b.id, isAsc);
+        case 'subtitle': return compare(a.subtitle, b.subtitle, isAsc);
         case 'capacity': return compare(a.capacity, b.capacity, isAsc);
         case 'participantCount': return compare(a.participants.length, b.participants.length, isAsc);
         case 'week': return compare(a.timetablePosition.week, b.timetablePosition.week, isAsc);

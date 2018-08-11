@@ -9,8 +9,12 @@
             <input matInput type="text" required [(ngModel)]="event.name" name="name">
           </mat-form-field>
           <mat-form-field appearance="fill">
+            <mat-label>Subtitle</mat-label>
+            <input matInput type="text" required [(ngModel)]="event.subtitle" name="subtitle">
+          </mat-form-field>
+          <mat-form-field appearance="fill">
             <mat-label>Capacity</mat-label>
-            <input matInput type="email" required [(ngModel)]="event.capacity" name="capacity">
+            <input matInput type="number" required [(ngModel)]="event.capacity" name="capacity">
           </mat-form-field>
           <mat-form-field appearance="fill">
             <mat-label>Week</mat-label>

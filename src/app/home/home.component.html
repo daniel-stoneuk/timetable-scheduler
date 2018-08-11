@@ -26,6 +26,7 @@
                   <ng-container *ngIf="sessions[weekIndex][dayIndex][sessionIndex].events.length === 1; else manyEvents">
                     <p class="mat-body-2">
                       {{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.name}}</p>
+                    <p class="mat-caption">{{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.subtitle}}</p>
                     <p class="mat-body-1">{{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.participants.length}} / {{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.capacity}}</p>
 
                   </ng-container>
