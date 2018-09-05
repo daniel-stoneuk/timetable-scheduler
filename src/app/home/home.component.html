@@ -2,8 +2,11 @@
   <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
     <div fxLayout="column" fxFlex.lg="40%" fxFlex.md="60%" fxFlex.lt-md="95%" fxLayoutGap="0px">
       <mat-progress-bar mode="indeterminate" *ngIf="events == undefined"></mat-progress-bar>
-      <h2 id="title" class="mat-title" *ngIf="events != undefined">Join {{userDetails.requiredEventCount - selectedEventCount}} Directed Study periods.</h2>
-      <p *ngIf="events != undefined">Click on Directed Study periods to toggle your choices. Make sure they don't clash with any other lessons on your timetable.</p>
+      <h2 id="title" class="mat-title" *ngIf="events != undefined && userDetails.requiredEventCount - selectedEventCount != 0; else none">Please join {{userDetails.requiredEventCount - selectedEventCount}} more Directed Study periods.</h2>
+      <ng-template #none>
+          <h2 id="title" class="mat-title" *ngIf="events != undefined">You do not need to join any Directed Study periods</h2>
+      </ng-template>
+      <p *ngIf="events != undefined">Click on Directed Study periods to toggle your choices. Important: <strong>Make sure they don't clash with any other lessons on your timetable.</strong></p>
     </div>
   </div>
   <ng-container *ngIf="sessions">

@@ -47,6 +47,8 @@ export class HomeComponent implements OnInit {
   school: School;
   isHandset: boolean = false;
 
+  canSelectSession: boolean = true;
+
   // week / day / session
   sessions: Session[][][];
 
@@ -143,6 +145,8 @@ export class HomeComponent implements OnInit {
   }
 
   public toggleSelection(event) {
+    if (this.canSelectSession) {
+    this.canSelectSession = false;
     const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/user-details/${this.user.userDetails}`);
     const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/events/${event.event.id}`);
     let eventParticipantIndex = event.event.participants.indexOf(this.user.userDetails);
@@ -152,6 +156,7 @@ export class HomeComponent implements OnInit {
       this.userDetails.events.splice(userDetailsEventIndex, 1);
     } else if (event.event.participants.length < event.event.capacity) {
       if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
+        this.selectedEventCount = this.selectedEventCount + 1;
         event.event.participants.push(this.user.userDetails);
         this.userDetails.events.push(event.event.id);
       } else {
@@ -162,9 +167,13 @@ export class HomeComponent implements OnInit {
     }
     userDetailsRef.update({
       events: this.userDetails.events
-    }).catch((err)=>{console.log(err); this.snackbar.open("Error occurred, check console");});
-    eventRef.update({
-      participants: event.event.participants
-    }).catch((err)=>{console.log(err); this.snackbar.open("Error occurred, check console");});
+    }).then(() => {
+      eventRef.update({
+        participants: event.event.participants
+      }).then(() => {
+        this.canSelectSession = true;
+      }).catch((err)=>{console.log(err); this.snackbar.open("Error occurred, check console");});
+    } ).catch((err)=>{console.log(err); this.snackbar.open("Error occurred, check console");});
+    }
   }
 }
