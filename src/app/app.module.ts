@@ -1,3 +1,4 @@
+import { SchoolAdminStudentsEventsDialogComponent } from './school-admin-students-events-dialog/school-admin-students-events-dialog.component';
 import { SchoolAdminEventsEditDialogComponent } from './school-admin-events-edit-dialog/school-admin-events-edit-dialog.component';
 import { SchoolAdminRoutingModule } from './school-admin-routing/school-admin-routing.module';
 import { AuthGuard } from './auth.guard';
@@ -49,13 +50,15 @@ import { PrivacyPolicyComponent } from './privacy-policy/privacy-policy.componen
     SchoolAdminEventsEditDialogComponent,
     SchoolAdminHomeComponent,
     SchoolAdminEventsParticipantDialogComponent,
+    SchoolAdminStudentsEventsDialogComponent,
     PrivacyPolicyComponent,
   ],
   entryComponents: [
     EventSelectionBottomSheetComponent,
     SchoolAdminStudentsEditDialogComponent,
     SchoolAdminEventsEditDialogComponent,
-    SchoolAdminEventsParticipantDialogComponent
+    SchoolAdminEventsParticipantDialogComponent,
+    SchoolAdminStudentsEventsDialogComponent,
   ],
   imports: [
     BrowserAnimationsModule,

@@ -162,9 +162,9 @@ export class HomeComponent implements OnInit {
     }
     userDetailsRef.update({
       events: this.userDetails.events
-    }).catch((err)=>console.log(err));
+    }).catch((err)=>{console.log(err); this.snackbar.open("Error occurred, check console");});
     eventRef.update({
       participants: event.event.participants
-    }).catch((err)=>console.log(err));
+    }).catch((err)=>{console.log(err); this.snackbar.open("Error occurred, check console");});
   }
 }

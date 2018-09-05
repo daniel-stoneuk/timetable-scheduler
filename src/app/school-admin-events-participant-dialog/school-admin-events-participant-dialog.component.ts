@@ -41,7 +41,7 @@ export class SchoolAdminEventsParticipantDialogComponent implements OnInit {
       // This code may get re-run multiple times if there are conflicts.
       return transaction.get(userDetailsRef.ref).then(doc => {
         if (!doc.data().events) {
-          transaction.set(userDetailsRef.ref, {
+          transaction.update(userDetailsRef.ref, {
             events: [this.event.id]
           });
         } else {
@@ -78,7 +78,7 @@ export class SchoolAdminEventsParticipantDialogComponent implements OnInit {
       // This code may get re-run multiple times if there are conflicts.
       return transaction.get(userDetailsRef.ref).then(doc => {
         if (!doc.data().events) {
-          transaction.set(userDetailsRef.ref, {
+          transaction.update(userDetailsRef.ref, {
             events: []
           });
         } else {

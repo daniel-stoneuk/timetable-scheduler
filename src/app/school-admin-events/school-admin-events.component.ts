@@ -27,7 +27,7 @@ export class SchoolAdminEventsComponent implements OnInit {
   constructor(private breakpointObserver: BreakpointObserver, private afs: AngularFirestore, private authService: AuthService, private snackbar: MatSnackBar, private matDialog: MatDialog) { }
 
   /** Columns displayed in the table. Columns IDs can be added, removed, or reordered. */
-  displayedColumns = ['name', 'subtitle', 'capacity', 'participantCount', 'week', 'day', 'session', 'edit'];
+  displayedColumns = ['id', 'name', 'subtitle', 'capacity', 'participantCount', 'week', 'day', 'session', 'edit'];
 
   user: User;
   school: SchoolId;
@@ -56,6 +56,25 @@ export class SchoolAdminEventsComponent implements OnInit {
     }
   }
 
+  async copyId(eventId: EventId) {
+    this.copyMessage(eventId.id);
+    this.snackbar.open("Copied event id: " + eventId.id, null, { duration: 1000 });
+  }
+
+  copyMessage(val: string){
+    let selBox = document.createElement('textarea');
+    selBox.style.position = 'fixed';
+    selBox.style.left = '0';
+    selBox.style.top = '0';
+    selBox.style.opacity = '0';
+    selBox.value = val;
+    document.body.appendChild(selBox);
+    selBox.focus();
+    selBox.select();
+    document.execCommand('copy');
+    document.body.removeChild(selBox);
+  }
+  
   async openParticipantDialog(eventId) {
     console.log("Open Participant Dialog");
     let schoolId = this.user.school;

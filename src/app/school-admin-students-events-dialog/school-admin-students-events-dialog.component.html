@@ -1,0 +1,29 @@
+<div fxLayout="column">
+  <div fxLayout="row" fxLayoutAlign="center">
+    <div fxLayout="column" fxFlex="95%">
+      <h2 class="mat-title">Events of {{userDetailsId.displayName}}</h2>
+      <mat-spinner *ngIf="!loaded; else loadedView" fxFlexAlign="center"></mat-spinner>
+      <ng-template #loadedView>
+        <div fxLayout="column">
+          <mat-list role="list">
+            <mat-list-item *ngIf="events.length === 0" role="listitem">No events</mat-list-item>
+            <mat-list-item *ngFor="let event of events" role="listitem">
+              <button mat-icon-button (click)="removeEvent(event)">
+                <mat-icon>remove_circle_fill</mat-icon>
+              </button>
+              <h3 matLine> {{event.name}} </h3>
+            </mat-list-item>
+          </mat-list>
+          <div class="row" style="margin: 1em">
+            <mat-form-field fxFlex="90% grow">
+              <input matInput [(ngModel)]="addEventId" placeholder="Event Id">
+            </mat-form-field>
+            <button mat-icon-button (click)="addEvent()">
+              <mat-icon>person_add</mat-icon>
+            </button>
+          </div>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+</div>

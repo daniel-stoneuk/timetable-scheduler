@@ -81,6 +81,7 @@ export class SchoolAdminEventsDataSource extends DataSource<EventId> {
     return data.sort((a, b) => {
       const isAsc = this.sort.direction === 'asc';
       switch (this.sort.active) {
+        case 'id': return compare(a.id, b.id, isAsc);
         case 'name': return compare(a.name, b.name, isAsc);
         case 'id': return compare(a.id, b.id, isAsc);
         case 'subtitle': return compare(a.subtitle, b.subtitle, isAsc);
