@@ -9,13 +9,7 @@ export interface UserDetails {
   displayName: string,
   email: string,
   requiredEventCount: number,
-  events: string[],
-  timetable: [{
-    name: string,
-    day: number,
-    session: number,
-    week: number
-  }]
+  events: string[]
 }
 
 export interface School {

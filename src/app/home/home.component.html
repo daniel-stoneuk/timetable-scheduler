@@ -2,10 +2,8 @@
   <div fxFlexOffset="20px" fxLayout="row" fxLayoutAlign="center">
     <div fxLayout="column" fxFlex.lg="40%" fxFlex.md="60%" fxFlex.lt-md="95%" fxLayoutGap="0px">
       <mat-progress-bar mode="indeterminate" *ngIf="events == undefined"></mat-progress-bar>
-      <h2 id="title" class="mat-title" *ngIf="events != undefined">Join {{userDetails.requiredEventCount - selectedEventCount}}
-        Directed Study periods.</h2>
-      <p *ngIf="events != undefined">Click on Directed Study periods to toggle your choices. Make sure they don't clash with
-        any other lessons on your timetable.</p>
+      <h2 id="title" class="mat-title" *ngIf="events != undefined">Join {{userDetails.requiredEventCount - selectedEventCount}} Directed Study periods.</h2>
+      <p *ngIf="events != undefined">Click on Directed Study periods to toggle your choices. Make sure they don't clash with any other lessons on your timetable.</p>
     </div>
   </div>
   <ng-container *ngIf="sessions">
@@ -29,28 +27,21 @@
                     <p class="mat-body-2">
                       {{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.name}}</p>
                     <p class="mat-caption">{{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.subtitle}}</p>
-                    <p class="mat-body-1">{{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.participants.length}}
-                      / {{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.capacity}}</p>
+                    <p class="mat-body-1">{{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.participants.length}} / {{sessions[weekIndex][dayIndex][sessionIndex].events[0].event.capacity}}</p>
 
                   </ng-container>
                   <ng-template #manyEvents>
                     <p class="mat-body-2">{{sessions[weekIndex][dayIndex][sessionIndex].events?.length}} sessions</p>
-                    <p class="mat-caption" style="margin: 0px" *ngFor="let multipleSession of sessions[weekIndex][dayIndex][sessionIndex].events">{{multipleSession.event.participants.length}}
-                      / {{multipleSession.event.capacity}}</p>
+                    <p class="mat-caption" style="margin: 0px" *ngFor="let multipleSession of sessions[weekIndex][dayIndex][sessionIndex].events">{{multipleSession.event.participants.length}} / {{multipleSession.event.capacity}}</p>
                   </ng-template>
                 </div>
                 <ng-template #noEvent>
-                  <ng-container *ngIf="!sessions[weekIndex][dayIndex][sessionIndex].break">
-                    <ng-container *ngIf="sessions[weekIndex][dayIndex][sessionIndex].clash == 'none'; else clash">
-                      <p class="mat-caption">No Event</p>
-                    </ng-container>
-                    <ng-template #clash>
-                      <p class="mat-caption">{{sessions[weekIndex][dayIndex][sessionIndex].clash}}</p>
-                    </ng-template>
+                  <ng-container *ngIf="!sessions[weekIndex][dayIndex][sessionIndex].break; else break">
+                    <p class="mat-caption">No Event</p>
                   </ng-container>
-                  <ng-container *ngIf="sessions[weekIndex][dayIndex][sessionIndex].break">
+                  <ng-template #break>
                     <p class="mat-caption">break</p>
-                  </ng-container>
+                  </ng-template>
                 </ng-template>
               </mat-grid-tile>
             </div>
