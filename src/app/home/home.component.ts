@@ -32,6 +32,9 @@ export interface Session {
     event: Event;
     selected: boolean;
   }];
+  clash: {
+    name: string;
+  }
 }
 
 @Component({
@@ -100,8 +103,12 @@ export class HomeComponent implements OnInit {
           let filtered = (this.events.filter((event) => {
             return (event.timetablePosition.day === day && event.timetablePosition.session === session && event.timetablePosition.week === week);
           }));
+          let clash = (this.userDetails.timetable.filter((item) => {
+            return (item.day === day && item.session === session && item.week === week);
+          }));
           let events = [];
-          if (filtered.length > 0) {
+          let clashName = "none"
+          if (filtered.length > 0 && clash.length == 0) {
             for (let event of filtered) {
               let selected = false;
               if (event.participants.includes(this.user.userDetails)) {
@@ -110,8 +117,12 @@ export class HomeComponent implements OnInit {
               }
               events.push({ event: event, selected: selected });
             }
+          } else if (clash.length > 0) {
+            for (let item of clash) {
+              clashName = item.name;
+            }
           }
-          sessions[week][day].push({ num: session, break: false, events: events });
+          sessions[week][day].push({ num: session, break: false, events: events, clash: clashName });
         }
         this.school.timetable.sessionData.breakAfter.sort((n1, n2) => { return n1 - n2 });
         let added = 0;
