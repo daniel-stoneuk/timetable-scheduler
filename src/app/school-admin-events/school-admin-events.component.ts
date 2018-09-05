@@ -11,6 +11,8 @@ import { MatPaginator, MatSort, MatDialog } from '@angular/material';
 import { SchoolAdminEventsDataSource } from './school-admin-events-datasource';
 import { SchoolAdminEventsEditDialogComponent } from '../school-admin-events-edit-dialog/school-admin-events-edit-dialog.component';
 import { Observable } from '../../../node_modules/rxjs';
+import { saveAs } from 'file-saver/FileSaver';
+import { take } from '../../../node_modules/rxjs/operators'
 
 @Component({
   selector: 'app-school-admin-events',
@@ -59,6 +61,27 @@ export class SchoolAdminEventsComponent implements OnInit {
   async copyId(eventId: EventId) {
     this.copyMessage(eventId.id);
     this.snackbar.open("Copied event id: " + eventId.id, null, { duration: 1000 });
+  }
+   
+  async exportToFile() {
+    let csv = "Event Name,Subtitle,Capacity,Participant Count,Participant Names\r\n"
+    let events: Event[] = await this.afs.collection<Event>(`/schools/${this.user.school}/events`).valueChanges().pipe(take(1)).toPromise();
+    for (let event of events) {
+      csv += event.name + "," + event.subtitle + "," + event.capacity + "," + event.participants.length + ",\r\n";
+      for (const userDetailId of event.participants) {
+        let userDetail = await this.afs.collection<UserDetails>(`schools/${this.user.school}/user-details`).doc<UserDetails>(userDetailId).valueChanges().pipe(first()).toPromise();
+        csv += ",,,,"+ userDetail.displayName +  "\r\n";
+      }
+      
+      csv += "\r\n";
+    }
+    console.log(JSON.stringify(events));
+    this.saveToFileSystem(csv);
+  }
+
+  saveToFileSystem(data) {
+    const blob = new Blob([data], { type: 'text/plain' });
+    saveAs(blob, "choosewhenexport.csv");
   }
 
   copyMessage(val: string){

@@ -4,6 +4,11 @@
       <mat-icon>add</mat-icon>
     </button>
   </div>
+  <div fxLayout="row" fxLayoutAlign="center center" fxFlexOffset="20px">
+      <button mat-raised-button color="primary" (click)="exportToFile()">
+        Export
+      </button>
+    </div>
   <div fxLayout="row" fxLayoutAlign="center" fxFlex="grow" fxFlexOffset="20px">
     <div fxFlex="90%" class="mat-elevation-z1" style="margin-bottom: 1em">
       <table style="width:100%" mat-table #table [dataSource]="dataSource" matSort aria-label="Elements">

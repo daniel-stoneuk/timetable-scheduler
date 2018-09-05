@@ -16,6 +16,7 @@ import { SchoolAdminStudentsEditDialogComponent } from "../school-admin-students
 import { Observable } from "../../../node_modules/rxjs";
 import { UserDetailsId } from "../initialise/initialise.component";
 import { SchoolAdminStudentsEventsDialogComponent } from "../school-admin-students-events-dialog/school-admin-students-events-dialog.component";
+import { saveAs } from 'file-saver/FileSaver';
 
 @Component({
   selector: "app-school-admin-students",
