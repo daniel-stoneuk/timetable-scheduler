@@ -17,6 +17,7 @@ import {
 } from "angularfire2/firestore";
 import { MatBottomSheet } from "@angular/material";
 import { EventSelectionBottomSheetComponent } from "../event-selection-bottom-sheet/event-selection-bottom-sheet.component";
+import { timeout } from "q";
 
 export interface Event {
   capacity: number;
@@ -80,7 +81,6 @@ export class HomeComponent implements OnInit {
         this.isHandset = value.matches;
         this.changeDetectorRef.detectChanges();
       });
-
     this.authService.getUser().subscribe(user => {
       console.log("Received an updated school object");
       this.user = user;
@@ -118,6 +118,7 @@ export class HomeComponent implements OnInit {
                       events => {
                         console.log("Received an updated events object");
                         this.events = events;
+                        console.log(JSON.stringify(events));
                         this.calculateSessions();
                       },
                       err => console.log(err)
@@ -150,7 +151,7 @@ export class HomeComponent implements OnInit {
             );
           });
           let events = [];
-          if (filtered.length > 0) {
+          if (filtered.length == 1) {
             for (let event of filtered) {
               let selected = false;
               if (event.participants.includes(this.user.userDetails)) {
@@ -208,26 +209,18 @@ export class HomeComponent implements OnInit {
   public toggleSelection(event) {
     if (this.canSelectSession) {
       this.canSelectSession = false;
-      const userDetailsRef: AngularFirestoreDocument<any> = this.afs.doc(
-        `schools/${this.user.school}/user-details/${this.user.userDetails}`
-      );
       const eventRef: AngularFirestoreDocument<any> = this.afs.doc(
         `schools/${this.user.school}/events/${event.event.id}`
       );
       let eventParticipantIndex = event.event.participants.indexOf(
         this.user.userDetails
       );
-      let userDetailsEventIndex = this.userDetails.events.indexOf(
-        event.event.id
-      );
-      if (eventParticipantIndex != -1 && userDetailsEventIndex != -1) {
+      if (eventParticipantIndex != -1) {
         event.event.participants.splice(eventParticipantIndex, 1);
-        this.userDetails.events.splice(userDetailsEventIndex, 1);
       } else if (event.event.participants.length < event.event.capacity) {
         if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
           this.selectedEventCount = this.selectedEventCount + 1;
           event.event.participants.push(this.user.userDetails);
-          this.userDetails.events.push(event.event.id);
         } else {
           this.snackbar.open(
             "You have reached your max number of joined events.",
@@ -243,26 +236,19 @@ export class HomeComponent implements OnInit {
           duration: 2000
         });
       }
-      userDetailsRef
+      eventRef
         .update({
-          events: this.userDetails.events
+          participants: event.event.participants
         })
         .then(() => {
-          eventRef
-            .update({
-              participants: event.event.participants
-            })
-            .then(() => {
-              this.canSelectSession = true;
-            })
-            .catch(err => {
-              console.log(err);
-              this.snackbar.open("Error occurred, check console");
-            });
+          this.canSelectSession = true;
         })
         .catch(err => {
           console.log(err);
-          this.snackbar.open("Error occurred, check console");
+          this.snackbar.open("An error occurred, please refresh");
+          setTimeout(() => {
+            location.reload();
+          }, 1000)
         });
     }
   }

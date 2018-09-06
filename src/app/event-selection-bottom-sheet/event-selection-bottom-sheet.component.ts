@@ -70,24 +70,15 @@ export class EventSelectionBottomSheetComponent implements OnInit {
     for (let ev of this.evs) {
       const eventRef: AngularFirestoreDocument<any> = this.afs.doc(`schools/${this.user.school}/events/${ev.event.id}`);
       let eventParticipantIndex = ev.event.participants.indexOf(this.user.userDetails);
-      let userDetailsEventIndex = this.userDetails.events.indexOf(ev.event.id);
       if (event.event.id === ev.event.id) {
-        if (eventParticipantIndex != -1 && userDetailsEventIndex != -1) {
+        if (eventParticipantIndex != -1) {
           event.event.participants.splice(eventParticipantIndex, 1);
-          this.userDetails.events.splice(userDetailsEventIndex, 1);
-          userDetailsRef.update({
-            events: this.userDetails.events
-          })
           eventRef.update({
             participants: ev.event.participants
           });
         } else if (event.event.participants.length < event.event.capacity) {
           if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
             event.event.participants.push(this.user.userDetails);
-            this.userDetails.events.push(event.event.id);
-            userDetailsRef.update({
-              events: this.userDetails.events
-            });
             eventRef.update({
               participants: ev.event.participants
             });
@@ -98,18 +89,12 @@ export class EventSelectionBottomSheetComponent implements OnInit {
         } else if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
           this.snackbar.open("This event is full. Try again later.", null, { duration: 2000 });
         }
-      } else if (eventParticipantIndex != -1 && userDetailsEventIndex != -1) {
+      } else if (eventParticipantIndex != -1) {
         ev.event.participants.splice(eventParticipantIndex, 1);
-        this.userDetails.events.splice(userDetailsEventIndex, 1);
-        userDetailsRef.update({
-          events: this.userDetails.events
-        })
         eventRef.update({
           participants: ev.event.participants
         });
       }
     }
-
-
   }
 }

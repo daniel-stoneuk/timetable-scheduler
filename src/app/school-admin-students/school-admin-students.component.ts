@@ -51,7 +51,6 @@ export class SchoolAdminStudentsComponent implements OnInit {
     "displayName",
     "email",
     "requiredEventCount",
-    "eventCount",
     "edit"
   ];
 
