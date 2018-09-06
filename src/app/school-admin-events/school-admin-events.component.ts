@@ -1,4 +1,4 @@
-import { EventId } from './../home/home.component';
+import { EventId, Event } from './../home/home.component';
 import { SchoolAdminEventsParticipantDialogComponent } from './../school-admin-events-participant-dialog/school-admin-events-participant-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { UserDetails, School, SchoolId } from './../initialise/initialise.component';
@@ -66,9 +66,9 @@ export class SchoolAdminEventsComponent implements OnInit {
   async exportToFile() {
     let csv = "Event Name,Subtitle,Capacity,Participant Count,Participant Names\r\n"
     let events: Event[] = await this.afs.collection<Event>(`/schools/${this.user.school}/events`).valueChanges().pipe(take(1)).toPromise();
-    for (let event of events) {
-      csv += event.name + "," + event.subtitle + "," + event.capacity + "," + event.participants.length + ",\r\n";
-      for (const userDetailId of event.participants) {
+    for (let ev of events) {
+      csv += ev.name + "," + ev.subtitle + "," + ev.capacity + "," + ev.participants.length + ",\r\n";
+      for (const userDetailId of ev.participants) {
         let userDetail = await this.afs.collection<UserDetails>(`schools/${this.user.school}/user-details`).doc<UserDetails>(userDetailId).valueChanges().pipe(first()).toPromise();
         csv += ",,,,"+ userDetail.displayName +  "\r\n";
       }
