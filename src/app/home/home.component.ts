@@ -120,7 +120,6 @@ export class HomeComponent implements OnInit {
                       events => {
                         console.log("Received an updated events object");
                         this.events = events;
-                        console.log(JSON.stringify(events));
                         this.calculateSessions();
                       },
                       err => console.log(err)
