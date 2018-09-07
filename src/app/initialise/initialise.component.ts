@@ -9,6 +9,7 @@ export interface UserDetails {
   displayName: string,
   email: string,
   requiredEventCount: number,
+  joinedEvents: number
 }
 
 export interface School {

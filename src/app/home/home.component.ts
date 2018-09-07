@@ -60,6 +60,8 @@ export class HomeComponent implements OnInit {
 
   canSelectSession: boolean = true;
 
+  loadingSnackbar: MatSnackBar;
+
   // week / day / session
   sessions: Session[][][];
 
@@ -126,6 +128,10 @@ export class HomeComponent implements OnInit {
                 },
                 err => console.log(err)
               );
+              window['drift'].identify(this.user.uid, {
+                email: this.user.email,
+                nickname: this.userDetails.displayName
+              })
           },
           err => console.log(err)
         );
@@ -217,11 +223,44 @@ export class HomeComponent implements OnInit {
       );
       if (eventParticipantIndex != -1) {
         event.event.participants.splice(eventParticipantIndex, 1);
+        this.snackbar.open("Leaving - if this takes a while please check your internet connection");
+          eventRef
+            .update({
+              participants: event.event.participants
+            })
+            .then(() => {
+              this.canSelectSession = true;
+              this.snackbar.open("You have left the event", null, {duration: 500});
+            })
+            .catch(err => {
+              console.log(err);
+              this.canSelectSession = true;
+              this.snackbar.open("An error occurred, please try again");
+            });
       } else if (event.event.participants.length < event.event.capacity) {
         if (this.userDetails.requiredEventCount - this.selectedEventCount > 0) {
           this.selectedEventCount = this.selectedEventCount + 1;
           event.event.participants.push(this.user.userDetails);
+          this.snackbar.open("Joining - if this takes a while please check your internet connection");
+          eventRef
+            .update({
+              participants: event.event.participants
+            })
+            .then(() => {
+              this.canSelectSession = true;
+              this.snackbar.open("You have joined the event", null, {duration: 500});
+            })
+            .catch(err => {
+              console.log(err);
+              this.canSelectSession = true;
+              this.snackbar.open("An error occurred, please try again");
+              // this.snackbar.open("An error occurred, please refresh");
+              // setTimeout(() => {
+              //   location.reload();
+              // }, 1000);
+            });
         } else {
+          this.canSelectSession = true;
           this.snackbar.open(
             "You have reached your max number of joined events.",
             null,
@@ -232,24 +271,11 @@ export class HomeComponent implements OnInit {
         this.userDetails.requiredEventCount - this.selectedEventCount >
         0
       ) {
+        this.canSelectSession = true;
         this.snackbar.open("This event is full. Try again later.", null, {
           duration: 2000
         });
       }
-      eventRef
-        .update({
-          participants: event.event.participants
-        })
-        .then(() => {
-          this.canSelectSession = true;
-        })
-        .catch(err => {
-          console.log(err);
-          this.snackbar.open("An error occurred, please refresh");
-          setTimeout(() => {
-            location.reload();
-          }, 1000)
-        });
     }
   }
 }

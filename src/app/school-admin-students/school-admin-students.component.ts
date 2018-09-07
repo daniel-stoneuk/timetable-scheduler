@@ -51,6 +51,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
     "displayName",
     "email",
     "requiredEventCount",
+    "eventsToJoin",
     "edit"
   ];
 
@@ -190,6 +191,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
             displayName: fullName,
             email: "",
             requiredEventCount: +sessionCount,
+            joinedEvents: 0,
             events: []
           };
 
@@ -274,6 +276,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
             displayName: name,
             email: email,
             requiredEventCount: 0,
+            joinedEvents: 0,
             events: []
           };
 

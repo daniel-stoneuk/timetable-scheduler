@@ -81,6 +81,7 @@ export class SchoolAdminStudentsDataSource extends DataSource<UserDetailsId> {
         case 'id': return compare(a.id, b.id, isAsc);
         case 'email': return compare(a.email, b.email, isAsc);
         case 'requiredEventCount': return compare(a.requiredEventCount, b.requiredEventCount, isAsc);
+        case 'eventsToJoin': return compare((a.requiredEventCount - a.joinedEvents), (b.requiredEventCount - b.joinedEvents), isAsc);
         default: return 0;
       }
     });

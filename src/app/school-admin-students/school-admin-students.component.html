@@ -48,7 +48,12 @@
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Req. Events</th>
           <td mat-cell *matCellDef="let row">{{row.requiredEventCount}}</td>
         </ng-container>
-        
+
+        <ng-container matColumnDef="eventsToJoin">
+          <th mat-header-cell *matHeaderCellDef mat-sort-header>Events to join</th>
+          <td mat-cell *matCellDef="let row">{{row.requiredEventCount - row.joinedEvents}}</td>
+        </ng-container>
+
         <ng-container matColumnDef="edit">
           <th mat-header-cell *matHeaderCellDef mat-sort-header>Edit</th>
           <td mat-cell *matCellDef="let row">

@@ -24,7 +24,7 @@ export class SchoolAdminStudentsEditDialogComponent implements OnInit {
   ngOnInit() {
     this.userDetails = this.data['userDetailsId'];
     if (!!!this.userDetails) {
-      this.userDetails = {displayName: '', email: '', requiredEventCount: 0}
+      this.userDetails = {displayName: '', email: '', requiredEventCount: 0, joinedEvents: 0}
     }
     console.log(this.userDetails);
 

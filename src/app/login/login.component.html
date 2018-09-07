@@ -10,7 +10,7 @@
               <mat-label>Email Address</mat-label>
               <input matInput type="email" required [(ngModel)]="email" name="email" [disabled]="emailSent" placeholder="me@example.com">
             </mat-form-field>
-            <button mat-raised-button type="submit" color="accent" [disabled]="!loginForm.form.valid || emailSent">Sign In</button>
+            <button mat-raised-button type="submit" color="accent" [disabled]="!loginForm.form.valid || emailSent">Send email link</button>
           </div>
         </form>
       </mat-card>
