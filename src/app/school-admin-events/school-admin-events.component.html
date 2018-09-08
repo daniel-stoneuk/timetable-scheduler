@@ -5,7 +5,7 @@
     </button>
   </div>
   <div fxLayout="row" fxLayoutAlign="center center" fxFlexOffset="20px">
-      <button mat-raised-button color="primary" (click)="exportToFile()">
+      <button mat-raised-button color="primary" [disabled]="!buttonsEnabled" (click)="exportToFile()">
         Export
       </button>
     </div>

@@ -1,3 +1,4 @@
+import { Event } from "./../home/home.component";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { async } from "@angular/core/testing";
 import { UserDetails, SchoolId } from "./../initialise/initialise.component";
@@ -16,7 +17,7 @@ import { SchoolAdminStudentsEditDialogComponent } from "../school-admin-students
 import { Observable } from "../../../node_modules/rxjs";
 import { UserDetailsId } from "../initialise/initialise.component";
 import { SchoolAdminStudentsEventsDialogComponent } from "../school-admin-students-events-dialog/school-admin-students-events-dialog.component";
-import { saveAs } from 'file-saver/FileSaver';
+import { saveAs } from "file-saver/FileSaver";
 
 @Component({
   selector: "app-school-admin-students",
@@ -83,20 +84,22 @@ export class SchoolAdminStudentsComponent implements OnInit {
 
   async copyId(userDetailsId: UserDetailsId) {
     this.copyMessage(userDetailsId.id);
-    this.snackbar.open("Copied user details id: " + userDetailsId.id, null, { duration: 1000 });
+    this.snackbar.open("Copied user details id: " + userDetailsId.id, null, {
+      duration: 1000
+    });
   }
 
-  copyMessage(val: string){
-    let selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
+  copyMessage(val: string) {
+    let selBox = document.createElement("textarea");
+    selBox.style.position = "fixed";
+    selBox.style.left = "0";
+    selBox.style.top = "0";
+    selBox.style.opacity = "0";
     selBox.value = val;
     document.body.appendChild(selBox);
     selBox.focus();
     selBox.select();
-    document.execCommand('copy');
+    document.execCommand("copy");
     document.body.removeChild(selBox);
   }
 
@@ -106,7 +109,11 @@ export class SchoolAdminStudentsComponent implements OnInit {
     let dialogRef = this.matDialog.open(
       SchoolAdminStudentsEventsDialogComponent,
       {
-        data: { school: this.school, schoolId: schoolId, userDetailsId: userDetailsId },
+        data: {
+          school: this.school,
+          schoolId: schoolId,
+          userDetailsId: userDetailsId
+        },
         width: "50%",
         height: "60%",
         maxWidth: "100vw",
@@ -124,6 +131,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
   }
 
   async uploadRequiredSessions() {
+    this.buttonsEnabled = false;
     let sessionCounts = this.requiredSessions.split(";");
     let schoolId = this.user.school;
     for (let user of sessionCounts) {
@@ -206,6 +214,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
         }
       }
     }
+    this.buttonsEnabled = true;
   }
 
   async delete(userDetailsId: UserDetailsId) {
@@ -220,7 +229,53 @@ export class SchoolAdminStudentsComponent implements OnInit {
       );
   }
 
+  buttonsEnabled: boolean = true;
+
+  async calculateJoined() {
+    this.buttonsEnabled = false;
+    let userDetails: UserDetailsId[] = await this.afs
+      .collection<UserDetailsId>(`schools/${this.user.school}/user-details`)
+      .snapshotChanges()
+      .pipe(
+        map(actions =>
+          actions.map(a => {
+            const data = a.payload.doc.data() as UserDetails;
+            const id = a.payload.doc.id;
+            return { id, ...data };
+          })
+        ),
+        take(1)
+      )
+      .toPromise();
+    let events: Event[] = await this.afs
+      .collection<Event>(`schools/${this.user.school}/events`)
+      .valueChanges()
+      .pipe(take(1))
+      .toPromise();
+    console.log(events);
+    for (let user of userDetails) {
+      console.log("Events for: " + user.displayName);
+      let count = 0;
+      let filtered = events.filter(ev => {
+        return ev.participants.includes(user.id);
+      });
+      console.log(filtered);
+      count = filtered.length;
+      console.log("Joined: " + count);
+      try {
+        await this.afs
+          .collection(`schools/${this.user.school}/user-details`)
+          .doc(user.id)
+          .update({ joinedEvents: count });
+      } catch (err) {
+        console.log("Error: " + err);
+      }
+    }
+    this.buttonsEnabled = true;
+  }
+
   async uploadEmails() {
+    this.buttonsEnabled = false;
     let users = this.emails.split(";");
     let schoolId = this.user.school;
     for (let user of users) {
@@ -291,6 +346,7 @@ export class SchoolAdminStudentsComponent implements OnInit {
         }
       }
     }
+    this.buttonsEnabled = true;
   }
   async openEditDialog(userDetailsId) {
     console.log("Open Edit Dialog");

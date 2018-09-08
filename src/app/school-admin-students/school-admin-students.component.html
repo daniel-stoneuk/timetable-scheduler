@@ -5,6 +5,11 @@
     </button>
   </div>
   <div fxLayout="row" fxLayoutAlign="center center" fxFlexOffset="20px">
+    <button mat-raised-button color="primary" [disabled]="!buttonsEnabled" (click)="calculateJoined()">
+      Calculate joined sesssions (costly operation)
+    </button>
+  </div>
+  <div fxLayout="row" fxLayoutAlign="center center" fxFlexOffset="20px">
     <mat-form-field appearance="fill">
       <mat-label>Emails</mat-label>
       <input matInput type="text" [(ngModel)]="emails" name="emails">
@@ -13,10 +18,10 @@
       <mat-label>Required Sessions</mat-label>
       <input matInput type="text" [(ngModel)]="requiredSessions" name="requiredSessions">
     </mat-form-field>
-    <button mat-raised-button color="primary" (click)="uploadEmails()">
+    <button mat-raised-button color="primary" [disabled]="!buttonsEnabled" (click)="uploadEmails()">
       Upload Emails
     </button>
-    <button mat-raised-button color="primary" (click)="uploadRequiredSessions()">
+    <button mat-raised-button color="primary" [disabled]="!buttonsEnabled" (click)="uploadRequiredSessions()">
       Upload Req Sessions
     </button>
   </div>

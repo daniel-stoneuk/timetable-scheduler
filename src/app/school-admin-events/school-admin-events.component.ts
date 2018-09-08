@@ -62,8 +62,11 @@ export class SchoolAdminEventsComponent implements OnInit {
     this.copyMessage(eventId.id);
     this.snackbar.open("Copied event id: " + eventId.id, null, { duration: 1000 });
   }
+
+  buttonsEnabled: boolean = true;
    
   async exportToFile() {
+    this.buttonsEnabled = false;
     let csv = "Event Name,Subtitle,Capacity,Participant Count,Participant Names\r\n"
     let events: Event[] = await this.afs.collection<Event>(`/schools/${this.user.school}/events`).valueChanges().pipe(take(1)).toPromise();
     for (let ev of events) {
@@ -77,6 +80,7 @@ export class SchoolAdminEventsComponent implements OnInit {
     }
     console.log(JSON.stringify(events));
     this.saveToFileSystem(csv);
+    this.buttonsEnabled = true;
   }
 
   saveToFileSystem(data) {
