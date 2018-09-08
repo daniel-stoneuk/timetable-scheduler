@@ -137,6 +137,13 @@ export class HomeComponent implements OnInit {
     });
   }
 
+  sendMessage() {
+    console.log("Send message")
+    window['drift'].on('ready', function(api) {
+      api.sidebar.open();
+    })
+  }
+
   calculateSessions() {
     let sessions = [];
     let weekCount = this.school.timetable.weekData.names.length;

@@ -7,6 +7,7 @@
           <h2 id="title" class="mat-title" *ngIf="events != undefined">You do not need to join any Directed Study periods</h2>
       </ng-template>
       <p *ngIf="events != undefined">Click on Directed Study periods to toggle your choices. Important: <strong>Make sure they don't clash with any other lessons on your timetable.</strong></p>
+      <p *ngIf="events != undefined">If you don't have enough free periods to complete the process, please <a (click)="sendMessage()" style="text-decoration: underline; color: #3f51b5">click here</a> and send a message.</p>
     </div>
   </div>
   <ng-container *ngIf="sessions">
