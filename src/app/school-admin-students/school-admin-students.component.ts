@@ -262,13 +262,15 @@ export class SchoolAdminStudentsComponent implements OnInit {
       console.log(filtered);
       count = filtered.length;
       console.log("Joined: " + count);
-      try {
-        await this.afs
-          .collection(`schools/${this.user.school}/user-details`)
-          .doc(user.id)
-          .update({ joinedEvents: count });
-      } catch (err) {
-        console.log("Error: " + err);
+      if (user.joinedEvents != count) {
+        try {
+          await this.afs
+            .collection(`schools/${this.user.school}/user-details`)
+            .doc(user.id)
+            .update({ joinedEvents: count });
+        } catch (err) {
+          console.log("Error: " + err);
+        }
       }
     }
     this.buttonsEnabled = true;
